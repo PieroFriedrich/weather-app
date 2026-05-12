@@ -1,58 +1,70 @@
-import { useState, useEffect } from 'react';
-import type { Coordinates, GeocodingResult } from './types/weather';
-import { useGeolocation } from './hooks/useGeolocation';
-import { useWeather } from './hooks/useWeather';
-import { CurrentWeather } from './components/CurrentWeather';
-import { SearchBar } from './components/SearchBar';
-import { reverseGeocode } from './services/geocoding';
+import { useState, useEffect } from "react";
+import type { Coordinates, GeocodingResult } from "./types/weather";
+import { useGeolocation } from "./hooks/useGeolocation";
+import { useWeather } from "./hooks/useWeather";
+import { CurrentWeather } from "./components/CurrentWeather";
+import { SearchBar } from "./components/SearchBar";
+import { reverseGeocode } from "./services/geocoding";
 
 export default function App() {
   const geo = useGeolocation();
   const [coords, setCoords] = useState<Coordinates | null>(null);
-  const [cityName, setCityName] = useState('');
+  const [cityName, setCityName] = useState("");
   const [geoCityName, setGeoCityName] = useState<string | undefined>(undefined);
+  const [unit, setUnit] = useState<"F" | "C">("C");
 
   useEffect(() => {
     if (!geo.coords || coords) return;
     reverseGeocode(geo.coords.latitude, geo.coords.longitude)
       .then(setGeoCityName)
-      .catch(() => setGeoCityName(''));
+      .catch(() => setGeoCityName(""));
   }, [geo.coords, coords]);
 
   const activeCoords = coords ?? geo.coords;
-  const activeCityName = coords ? cityName : (geoCityName ?? '');
+  const activeCityName = coords ? cityName : (geoCityName ?? "");
   const cityReady = coords !== null || geoCityName !== undefined;
   const weather = useWeather(activeCoords);
 
   function handleSelect(result: GeocodingResult) {
     setCoords({ latitude: result.latitude, longitude: result.longitude });
-    setCityName(result.admin1 ? `${result.name}, ${result.admin1}` : result.name);
+    setCityName(
+      result.admin1 ? `${result.name}, ${result.admin1}` : result.name,
+    );
   }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-sky-900 via-blue-800 to-indigo-900 flex flex-col items-center justify-center px-4 gap-6">
-      <h1 className="text-3xl font-light text-white tracking-widest">Weather</h1>
+      <h1 className="text-3xl font-light text-white tracking-widest">
+        Weather
+      </h1>
 
       <SearchBar onSelect={handleSelect} />
 
       {geo.loading && !coords && (
-        <p className="text-white/50 text-sm animate-pulse">Detecting your location…</p>
+        <p className="text-white/50 text-sm animate-pulse">
+          Detecting your location…
+        </p>
       )}
 
       {geo.error && !coords && !weather.data && !weather.loading && (
-        <p className="text-white/50 text-sm">{geo.error} — search for a city above</p>
+        <p className="text-white/50 text-sm">
+          {geo.error} — search for a city above
+        </p>
       )}
 
       {(weather.loading || (weather.data && !cityReady)) && (
         <p className="text-white/50 text-sm animate-pulse">Loading weather…</p>
       )}
 
-      {weather.error && (
-        <p className="text-red-300 text-sm">{weather.error}</p>
-      )}
+      {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
 
       {weather.data && !weather.loading && cityReady && (
-        <CurrentWeather data={weather.data} cityName={activeCityName} />
+        <CurrentWeather
+          data={weather.data}
+          cityName={activeCityName}
+          unit={unit}
+          onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+        />
       )}
     </div>
   );
