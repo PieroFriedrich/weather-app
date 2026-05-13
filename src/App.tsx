@@ -48,7 +48,7 @@ export default function App() {
         Weather
       </h1>
 
-      <div className="w-max min-w-96 flex flex-col gap-6">
+      <div className="w-full max-w-sm sm:w-max sm:max-w-none sm:min-w-96 flex flex-col gap-6">
         <SearchBar onSelect={handleSelect} />
 
         {geo.loading && !coords && (
@@ -70,7 +70,7 @@ export default function App() {
         {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
 
         {weather.data && !weather.loading && cityReady && (
-          <div className="flex items-stretch gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch gap-4">
             <CurrentWeather
               data={weather.data}
               cityName={activeCityName}
