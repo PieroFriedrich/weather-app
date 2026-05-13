@@ -28,7 +28,7 @@ export function ForecastStrip({ forecast, unit }: Props) {
   if (!forecast.length) return null;
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-4 flex flex-col gap-3">
+    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-4 flex flex-col h-full justify-between">
       {forecast.map((day) => {
         const high = unit === 'C' ? toC(day.tempMax) : day.tempMax;
         const low  = unit === 'C' ? toC(day.tempMin) : day.tempMin;

@@ -46,7 +46,7 @@ export function SearchBar({ onSelect }: Props) {
   }
 
   return (
-    <div className="relative w-full max-w-sm">
+    <div className="relative w-full">
       <div className="flex items-center bg-white/15 backdrop-blur-md rounded-2xl px-4 py-3 gap-2 border border-white/20">
         <span className="text-white/50 text-sm">🔍</span>
         <input

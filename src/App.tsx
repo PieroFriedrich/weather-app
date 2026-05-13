@@ -48,37 +48,39 @@ export default function App() {
         Weather
       </h1>
 
-      <SearchBar onSelect={handleSelect} />
+      <div className="w-max min-w-96 flex flex-col gap-6">
+        <SearchBar onSelect={handleSelect} />
 
-      {geo.loading && !coords && (
-        <p className="text-white/50 text-sm animate-pulse">
-          Detecting your location…
-        </p>
-      )}
+        {geo.loading && !coords && (
+          <p className="text-white/50 text-sm animate-pulse">
+            Detecting your location…
+          </p>
+        )}
 
-      {geo.error && !coords && !weather.data && !weather.loading && (
-        <p className="text-white/50 text-sm">
-          {geo.error} — search for a city above
-        </p>
-      )}
+        {geo.error && !coords && !weather.data && !weather.loading && (
+          <p className="text-white/50 text-sm">
+            {geo.error} — search for a city above
+          </p>
+        )}
 
-      {(weather.loading || (weather.data && !cityReady)) && (
-        <p className="text-white/50 text-sm animate-pulse">Loading weather…</p>
-      )}
+        {(weather.loading || (weather.data && !cityReady)) && (
+          <p className="text-white/50 text-sm animate-pulse">Loading weather…</p>
+        )}
 
-      {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
+        {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
 
-      {weather.data && !weather.loading && cityReady && (
-        <div className="flex items-start gap-4">
-          <CurrentWeather
-            data={weather.data}
-            cityName={activeCityName}
-            unit={unit}
-            onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
-          />
-          {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
-        </div>
-      )}
+        {weather.data && !weather.loading && cityReady && (
+          <div className="flex items-stretch gap-4">
+            <CurrentWeather
+              data={weather.data}
+              cityName={activeCityName}
+              unit={unit}
+              onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+            />
+            {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
