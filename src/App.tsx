@@ -3,6 +3,7 @@ import type { Coordinates, GeocodingResult } from "./types/weather";
 import { useGeolocation } from "./hooks/useGeolocation";
 import { useWeather } from "./hooks/useWeather";
 import { CurrentWeather } from "./components/CurrentWeather";
+import { ForecastStrip } from "./components/ForecastStrip";
 import { SearchBar } from "./components/SearchBar";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
@@ -67,12 +68,15 @@ export default function App() {
       {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
 
       {weather.data && !weather.loading && cityReady && (
-        <CurrentWeather
-          data={weather.data}
-          cityName={activeCityName}
-          unit={unit}
-          onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
-        />
+        <>
+          <CurrentWeather
+            data={weather.data}
+            cityName={activeCityName}
+            unit={unit}
+            onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+          />
+          <ForecastStrip forecast={weather.forecast} unit={unit} />
+        </>
       )}
     </div>
   );

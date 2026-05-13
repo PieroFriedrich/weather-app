@@ -18,3 +18,10 @@ export interface CurrentWeather {
   windSpeed: number;
   weatherCode: number;
 }
+
+export interface DailyForecast {
+  date: string;
+  weatherCode: number;
+  tempMax: number;
+  tempMin: number;
+}
