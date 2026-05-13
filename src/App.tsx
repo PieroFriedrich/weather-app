@@ -5,6 +5,7 @@ import { useWeather } from "./hooks/useWeather";
 import { CurrentWeather } from "./components/CurrentWeather";
 import { SearchBar } from "./components/SearchBar";
 import { reverseGeocode } from "./services/geocoding";
+import { getWeatherTheme } from "./utils/wmo";
 
 export default function App() {
   const geo = useGeolocation();
@@ -24,6 +25,7 @@ export default function App() {
   const activeCityName = coords ? cityName : (geoCityName ?? "");
   const cityReady = coords !== null || geoCityName !== undefined;
   const weather = useWeather(activeCoords);
+  const theme = getWeatherTheme(weather.data?.weatherCode ?? -1);
 
   function handleSelect(result: GeocodingResult) {
     setCoords({ latitude: result.latitude, longitude: result.longitude });
@@ -33,7 +35,13 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-sky-900 via-blue-800 to-indigo-900 flex flex-col items-center justify-center px-4 gap-6">
+    <div
+      className="relative min-h-screen flex flex-col items-center justify-center px-4 gap-6 overflow-hidden transition-all duration-1000"
+      style={{ background: theme.gradient }}
+    >
+      {theme.overlayClass && (
+        <div className={`absolute inset-0 pointer-events-none ${theme.overlayClass}`} aria-hidden="true" />
+      )}
       <h1 className="text-3xl font-light text-white tracking-widest">
         Weather
       </h1>
