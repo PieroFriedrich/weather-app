@@ -27,6 +27,7 @@ export default function App() {
   const cityReady = coords !== null || geoCityName !== undefined;
   const weather = useWeather(activeCoords);
   const theme = getWeatherTheme(weather.data?.weatherCode ?? -1);
+  const showForecast = geo.coords !== null || coords !== null;
 
   function handleSelect(result: GeocodingResult) {
     setCoords({ latitude: result.latitude, longitude: result.longitude });
@@ -68,15 +69,15 @@ export default function App() {
       {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
 
       {weather.data && !weather.loading && cityReady && (
-        <>
+        <div className="flex items-start gap-4">
           <CurrentWeather
             data={weather.data}
             cityName={activeCityName}
             unit={unit}
             onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
           />
-          <ForecastStrip forecast={weather.forecast} unit={unit} />
-        </>
+          {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
+        </div>
       )}
     </div>
   );
