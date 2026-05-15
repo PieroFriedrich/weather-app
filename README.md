@@ -1,8 +1,27 @@
 # Weather App
 
-<p align="center">
-  <img src="src/assets/mainpage-screenshot.png" alt="Weather App screenshot" width="380" />
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="src/assets/daytime-screenshot.png" alt="Sunny theme — desktop" width="420" /><br/>
+      <sub>Sunny theme — desktop</sub>
+    </td>
+    <td align="center">
+      <img src="src/assets/desktop-screenshot.png" alt="Rainy theme — desktop" width="420" /><br/>
+      <sub>Rainy theme — desktop</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="src/assets/mainpage-screenshot.png" alt="Overcast — mobile" width="420" /><br/>
+      <sub>Overcast — mobile</sub>
+    </td>
+    <td align="center">
+      <img src="src/assets/search-screenshot.png" alt="City search autocomplete" width="420" /><br/>
+      <sub>City search autocomplete</sub>
+    </td>
+  </tr>
+</table>
 
 A clean, responsive weather app that shows current conditions and a 7-day forecast for any city in the world — or your current location automatically.
 
