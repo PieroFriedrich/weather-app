@@ -3,6 +3,7 @@ import type { Coordinates, CurrentWeather, DailyForecast } from '../types/weathe
 interface OpenMeteoResponse {
   current: {
     temperature_2m: number;
+    apparent_temperature: number;
     relative_humidity_2m: number;
     wind_speed_10m: number;
     weather_code: number;
@@ -23,7 +24,7 @@ export async function fetchWeather(
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${latitude}&longitude=${longitude}` +
-    `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code` +
+    `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code` +
     `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
     `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
   const res = await fetch(url);
@@ -32,6 +33,7 @@ export async function fetchWeather(
 
   const current: CurrentWeather = {
     temperature: Math.round(data.current.temperature_2m),
+    feelsLike: Math.round(data.current.apparent_temperature),
     humidity: data.current.relative_humidity_2m,
     windSpeed: Math.round(data.current.wind_speed_10m),
     weatherCode: data.current.weather_code,

@@ -18,6 +18,7 @@ export interface CurrentWeather {
   windSpeed: number;
   weatherCode: number;
   precipitationProbability: number;
+  feelsLike: number;
 }
 
 export interface DailyForecast {

@@ -13,12 +13,19 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit }: Props) {
     ? data.temperature
     : Math.round((data.temperature - 32) * 5 / 9);
 
+  const displayFeelsLike = unit === 'F'
+    ? data.feelsLike
+    : Math.round((data.feelsLike - 32) * 5 / 9);
+
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm text-white">
       <p className="text-white/60 text-sm font-medium uppercase tracking-widest mb-1">{cityName}</p>
 
       <div className="flex items-start justify-between mb-6">
-        <div className="text-8xl font-thin">{displayTemp}°{unit}</div>
+        <div>
+          <div className="text-8xl font-thin">{displayTemp}°{unit}</div>
+          <p className="text-white/50 text-sm mt-1">Feels like {displayFeelsLike}°{unit}</p>
+        </div>
         <button
           type="button"
           onClick={onToggleUnit}
