@@ -5,6 +5,7 @@ import { useWeather } from "./hooks/useWeather";
 import { CurrentWeather } from "./components/CurrentWeather";
 import { ForecastStrip } from "./components/ForecastStrip";
 import { HourlyChart } from "./components/HourlyChart";
+import { PrecipChart } from "./components/PrecipChart";
 import { SearchBar } from "./components/SearchBar";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
@@ -83,6 +84,9 @@ export default function App() {
             </div>
             {showForecast && weather.hourly.length > 0 && (
               <HourlyChart hourly={weather.hourly} unit={unit} />
+            )}
+            {showForecast && weather.hourly.length > 0 && (
+              <PrecipChart hourly={weather.hourly} />
             )}
           </div>
         )}
