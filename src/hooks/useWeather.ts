@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import type { Coordinates, CurrentWeather, DailyForecast } from '../types/weather';
+import type { Coordinates, CurrentWeather, DailyForecast, HourlyPoint } from '../types/weather';
 import { fetchWeather } from '../services/weather';
 
 interface WeatherState {
   data: CurrentWeather | null;
   forecast: DailyForecast[];
+  hourly: HourlyPoint[];
   error: string | null;
   loading: boolean;
 }
@@ -13,19 +14,20 @@ export function useWeather(coords: Coordinates | null): WeatherState {
   const [state, setState] = useState<WeatherState>({
     data: null,
     forecast: [],
+    hourly: [],
     error: null,
     loading: false,
   });
 
   useEffect(() => {
     if (!coords) return;
-    setState({ data: null, forecast: [], error: null, loading: true });
+    setState({ data: null, forecast: [], hourly: [], error: null, loading: true });
     fetchWeather(coords)
-      .then(({ current, forecast }) =>
-        setState({ data: current, forecast, error: null, loading: false }),
+      .then(({ current, forecast, hourly }) =>
+        setState({ data: current, forecast, hourly, error: null, loading: false }),
       )
       .catch(() =>
-        setState({ data: null, forecast: [], error: 'Could not load weather data', loading: false }),
+        setState({ data: null, forecast: [], hourly: [], error: 'Could not load weather data', loading: false }),
       );
   }, [coords?.latitude, coords?.longitude]);
 

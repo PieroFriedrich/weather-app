@@ -4,6 +4,7 @@ import { useGeolocation } from "./hooks/useGeolocation";
 import { useWeather } from "./hooks/useWeather";
 import { CurrentWeather } from "./components/CurrentWeather";
 import { ForecastStrip } from "./components/ForecastStrip";
+import { HourlyChart } from "./components/HourlyChart";
 import { SearchBar } from "./components/SearchBar";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
@@ -70,14 +71,19 @@ export default function App() {
         {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
 
         {weather.data && !weather.loading && cityReady && (
-          <div className="flex flex-col sm:flex-row items-stretch gap-4">
-            <CurrentWeather
-              data={weather.data}
-              cityName={activeCityName}
-              unit={unit}
-              onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
-            />
-            {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch gap-4">
+              <CurrentWeather
+                data={weather.data}
+                cityName={activeCityName}
+                unit={unit}
+                onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+              />
+              {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
+            </div>
+            {showForecast && weather.hourly.length > 0 && (
+              <HourlyChart hourly={weather.hourly} unit={unit} />
+            )}
           </div>
         )}
       </div>

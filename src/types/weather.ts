@@ -27,3 +27,9 @@ export interface DailyForecast {
   tempMax: number;
   tempMin: number;
 }
+
+export interface HourlyPoint {
+  time: string;
+  temperature: number;
+  precipitationProbability: number;
+}

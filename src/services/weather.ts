@@ -1,12 +1,18 @@
-import type { Coordinates, CurrentWeather, DailyForecast } from '../types/weather';
+import type { Coordinates, CurrentWeather, DailyForecast, HourlyPoint } from '../types/weather';
 
 interface OpenMeteoResponse {
   current: {
+    time: string;
     temperature_2m: number;
     apparent_temperature: number;
     relative_humidity_2m: number;
     wind_speed_10m: number;
     weather_code: number;
+  };
+  hourly: {
+    time: string[];
+    temperature_2m: number[];
+    precipitation_probability: number[];
   };
   daily: {
     time: string[];
@@ -19,12 +25,13 @@ interface OpenMeteoResponse {
 
 export async function fetchWeather(
   coords: Coordinates,
-): Promise<{ current: CurrentWeather; forecast: DailyForecast[] }> {
+): Promise<{ current: CurrentWeather; forecast: DailyForecast[]; hourly: HourlyPoint[] }> {
   const { latitude, longitude } = coords;
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${latitude}&longitude=${longitude}` +
     `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code` +
+    `&hourly=temperature_2m,precipitation_probability` +
     `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
     `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
   const res = await fetch(url);
@@ -47,5 +54,14 @@ export async function fetchWeather(
     tempMin: Math.round(data.daily.temperature_2m_min[i]),
   }));
 
-  return { current, forecast };
+  const currentHour = data.current.time.slice(0, 13) + ':00';
+  const startIdx = data.hourly.time.indexOf(currentHour);
+  const slice = startIdx >= 0 ? startIdx : 0;
+  const hourly: HourlyPoint[] = data.hourly.time.slice(slice, slice + 24).map((time, i) => ({
+    time,
+    temperature: Math.round(data.hourly.temperature_2m[slice + i]),
+    precipitationProbability: data.hourly.precipitation_probability[slice + i] ?? 0,
+  }));
+
+  return { current, forecast, hourly };
 }
