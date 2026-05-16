@@ -31,7 +31,7 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit }: Props) {
       </div>
 
       <WeatherIcon code={data.weatherCode} />
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className="mt-6 grid grid-cols-3 gap-3">
         <div className="bg-white/10 rounded-2xl p-4">
           <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Humidity</p>
           <p className="text-2xl font-light">{data.humidity}%</p>
@@ -39,6 +39,10 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit }: Props) {
         <div className="bg-white/10 rounded-2xl p-4">
           <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Wind</p>
           <p className="text-2xl font-light">{data.windSpeed} mph</p>
+        </div>
+        <div className="bg-white/10 rounded-2xl p-4">
+          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Rain</p>
+          <p className="text-2xl font-light">{data.precipitationProbability}%</p>
         </div>
       </div>
     </div>

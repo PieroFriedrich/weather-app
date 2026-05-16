@@ -17,6 +17,7 @@ export interface CurrentWeather {
   humidity: number;
   windSpeed: number;
   weatherCode: number;
+  precipitationProbability: number;
 }
 
 export interface DailyForecast {
