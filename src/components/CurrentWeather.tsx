@@ -6,9 +6,12 @@ interface Props {
   cityName: string;
   unit: 'F' | 'C';
   onToggleUnit: () => void;
+  isSaved: boolean;
+  onSave: () => void;
+  onUnsave: () => void;
 }
 
-export function CurrentWeather({ data, cityName, unit, onToggleUnit }: Props) {
+export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, onSave, onUnsave }: Props) {
   const displayTemp = unit === 'F'
     ? data.temperature
     : Math.round((data.temperature - 32) * 5 / 9);
@@ -19,7 +22,25 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit }: Props) {
 
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm text-white">
-      <p className="text-white/60 text-sm font-medium uppercase tracking-widest mb-1">{cityName}</p>
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-white/60 text-sm font-medium uppercase tracking-widest">{cityName}</p>
+        <button
+          type="button"
+          onClick={isSaved ? onUnsave : onSave}
+          aria-label={isSaved ? 'Remove from saved locations' : 'Save this location'}
+          className="text-white/50 hover:text-white transition-colors focus:outline-none"
+        >
+          {isSaved ? (
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+              <path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
+            </svg>
+          )}
+        </button>
+      </div>
 
       <div className="flex items-start justify-between mb-6">
         <div>

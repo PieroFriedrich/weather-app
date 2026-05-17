@@ -33,3 +33,9 @@ export interface HourlyPoint {
   temperature: number;
   precipitationProbability: number;
 }
+
+export interface SavedLocation {
+  id: string;
+  name: string;
+  coords: Coordinates;
+}

@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import type { Coordinates, GeocodingResult } from "./types/weather";
+import type { Coordinates, GeocodingResult, SavedLocation } from "./types/weather";
 import { useGeolocation } from "./hooks/useGeolocation";
 import { useWeather } from "./hooks/useWeather";
+import { useSavedLocations } from "./hooks/useSavedLocations";
 import { CurrentWeather } from "./components/CurrentWeather";
 import { ForecastStrip } from "./components/ForecastStrip";
 import { HourlyChart } from "./components/HourlyChart";
 import { PrecipChart } from "./components/PrecipChart";
 import { SearchBar } from "./components/SearchBar";
+import { SavedLocationsBar } from "./components/SavedLocationsBar";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
 
@@ -16,6 +18,7 @@ export default function App() {
   const [cityName, setCityName] = useState("");
   const [geoCityName, setGeoCityName] = useState<string | undefined>(undefined);
   const [unit, setUnit] = useState<"F" | "C">("C");
+  const { savedLocations, add, remove, has } = useSavedLocations();
 
   useEffect(() => {
     if (!geo.coords || coords) return;
@@ -38,6 +41,26 @@ export default function App() {
     );
   }
 
+  function handleSelectSaved(location: SavedLocation) {
+    setCoords(location.coords);
+    setCityName(location.name);
+  }
+
+  function handleSave() {
+    if (!activeCoords) return;
+    add({ id: crypto.randomUUID(), name: activeCityName, coords: activeCoords });
+  }
+
+  function handleUnsave() {
+    if (!activeCoords) return;
+    const found = savedLocations.find(
+      loc =>
+        Math.abs(loc.coords.latitude - activeCoords.latitude) < 0.01 &&
+        Math.abs(loc.coords.longitude - activeCoords.longitude) < 0.01,
+    );
+    if (found) remove(found.id);
+  }
+
   return (
     <div
       className="relative min-h-screen flex flex-col items-center justify-center px-4 gap-6 overflow-hidden transition-all duration-1000"
@@ -52,6 +75,12 @@ export default function App() {
 
       <div className="w-full max-w-sm sm:w-max sm:max-w-none sm:min-w-96 flex flex-col gap-6">
         <SearchBar onSelect={handleSelect} />
+        <SavedLocationsBar
+          locations={savedLocations}
+          activeCoords={activeCoords}
+          onSelect={handleSelectSaved}
+          onRemove={remove}
+        />
 
         {geo.loading && !coords && (
           <p className="text-white/50 text-sm animate-pulse">
@@ -79,6 +108,9 @@ export default function App() {
                 cityName={activeCityName}
                 unit={unit}
                 onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+                isSaved={activeCoords ? has(activeCoords) : false}
+                onSave={handleSave}
+                onUnsave={handleUnsave}
               />
               {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
             </div>
