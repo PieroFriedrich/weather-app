@@ -8,7 +8,7 @@ import { ForecastStrip } from "./components/ForecastStrip";
 import { HourlyChart } from "./components/HourlyChart";
 import { PrecipChart } from "./components/PrecipChart";
 import { SearchBar } from "./components/SearchBar";
-import { SavedLocationsBar } from "./components/SavedLocationsBar";
+import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
 
@@ -19,6 +19,7 @@ export default function App() {
   const [geoCityName, setGeoCityName] = useState<string | undefined>(undefined);
   const [unit, setUnit] = useState<"F" | "C">("C");
   const { savedLocations, add, remove, has } = useSavedLocations();
+  const [savedPanelOpen, setSavedPanelOpen] = useState(false);
 
   useEffect(() => {
     if (!geo.coords || coords) return;
@@ -75,9 +76,12 @@ export default function App() {
 
       <div className="w-full max-w-sm sm:w-max sm:max-w-none sm:min-w-96 flex flex-col gap-6">
         <SearchBar onSelect={handleSelect} />
-        <SavedLocationsBar
+        <SavedLocationsPanel
           locations={savedLocations}
           activeCoords={activeCoords}
+          mobileOpen={savedPanelOpen}
+          onMobileOpen={() => setSavedPanelOpen(true)}
+          onMobileClose={() => setSavedPanelOpen(false)}
           onSelect={handleSelectSaved}
           onRemove={remove}
         />
