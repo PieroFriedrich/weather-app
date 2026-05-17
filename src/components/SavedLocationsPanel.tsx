@@ -68,7 +68,7 @@ export function SavedLocationsPanel({
   return (
     <>
       {/* Desktop: fixed left sidebar */}
-      <aside className="hidden sm:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-2 w-44 z-30">
+      <aside className="hidden lg:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-2 w-44 z-30">
         <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">Saved</p>
         {locations.map(loc => (
           <LocationRow
@@ -85,7 +85,7 @@ export function SavedLocationsPanel({
       <button
         type="button"
         onClick={onMobileOpen}
-        className="sm:hidden self-start flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors text-white/80 text-sm font-medium rounded-full px-4 py-1.5 focus:outline-none"
+        className="lg:hidden self-start flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors text-white/80 text-sm font-medium rounded-full px-4 py-1.5 focus:outline-none"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
           <path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
@@ -97,10 +97,10 @@ export function SavedLocationsPanel({
       {mobileOpen && (
         <>
           <div
-            className="sm:hidden fixed inset-0 bg-black/40 z-40"
+            className="lg:hidden fixed inset-0 bg-black/40 z-40"
             onClick={onMobileClose}
           />
-          <div className="sm:hidden fixed bottom-0 inset-x-0 z-50 bg-white/10 backdrop-blur-xl rounded-t-3xl p-6 flex flex-col gap-3">
+          <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/10 backdrop-blur-xl rounded-t-3xl p-6 flex flex-col gap-3">
             <div className="flex items-center justify-between mb-1">
               <p className="text-white font-medium">Saved Locations</p>
               <button
