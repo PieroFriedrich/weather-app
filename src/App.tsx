@@ -90,6 +90,7 @@ export default function App() {
         <SavedLocationsPanel
           locations={savedLocations}
           activeCoords={activeCoords}
+          unit={unit}
           mobileOpen={savedPanelOpen}
           onMobileOpen={() => setSavedPanelOpen(true)}
           onMobileClose={() => setSavedPanelOpen(false)}

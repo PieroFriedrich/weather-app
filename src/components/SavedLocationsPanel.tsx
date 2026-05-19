@@ -1,8 +1,10 @@
 import type { SavedLocation, Coordinates } from '../types/weather';
+import { SavedLocationCard } from './SavedLocationCard';
 
 interface Props {
   locations: SavedLocation[];
   activeCoords: Coordinates | null;
+  unit: 'F' | 'C';
   mobileOpen: boolean;
   onMobileOpen: () => void;
   onMobileClose: () => void;
@@ -18,45 +20,10 @@ function isActive(loc: SavedLocation, activeCoords: Coordinates | null): boolean
   );
 }
 
-function LocationRow({
-  loc,
-  active,
-  onSelect,
-  onRemove,
-}: {
-  loc: SavedLocation;
-  active: boolean;
-  onSelect: () => void;
-  onRemove: () => void;
-}) {
-  return (
-    <div
-      className={`flex items-center justify-between gap-2 rounded-2xl px-3 py-2 transition-colors ${
-        active ? 'bg-white/25 text-white' : 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white'
-      }`}
-    >
-      <button
-        type="button"
-        onClick={onSelect}
-        className="flex-1 text-left text-sm font-medium truncate focus:outline-none"
-      >
-        {loc.name}
-      </button>
-      <button
-        type="button"
-        onClick={onRemove}
-        aria-label={`Remove ${loc.name}`}
-        className="text-white/40 hover:text-white/80 transition-colors focus:outline-none shrink-0 text-xs leading-none"
-      >
-        ✕
-      </button>
-    </div>
-  );
-}
-
 export function SavedLocationsPanel({
   locations,
   activeCoords,
+  unit,
   mobileOpen,
   onMobileOpen,
   onMobileClose,
@@ -68,13 +35,14 @@ export function SavedLocationsPanel({
   return (
     <>
       {/* Desktop: fixed left sidebar */}
-      <aside className="hidden lg:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-2 w-44 z-30">
+      <aside className="hidden lg:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-3 w-52 z-30">
         <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">Saved</p>
         {locations.map(loc => (
-          <LocationRow
+          <SavedLocationCard
             key={loc.id}
-            loc={loc}
-            active={isActive(loc, activeCoords)}
+            location={loc}
+            isActive={isActive(loc, activeCoords)}
+            unit={unit}
             onSelect={() => onSelect(loc)}
             onRemove={() => onRemove(loc.id)}
           />
@@ -100,8 +68,8 @@ export function SavedLocationsPanel({
             className="lg:hidden fixed inset-0 bg-black/40 z-40"
             onClick={onMobileClose}
           />
-          <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/10 backdrop-blur-xl rounded-t-3xl p-6 flex flex-col gap-3">
-            <div className="flex items-center justify-between mb-1">
+          <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/10 backdrop-blur-xl rounded-t-3xl p-6 flex flex-col gap-4">
+            <div className="flex items-center justify-between">
               <p className="text-white font-medium">Saved Locations</p>
               <button
                 type="button"
@@ -112,15 +80,18 @@ export function SavedLocationsPanel({
                 ✕
               </button>
             </div>
-            {locations.map(loc => (
-              <LocationRow
-                key={loc.id}
-                loc={loc}
-                active={isActive(loc, activeCoords)}
-                onSelect={() => { onSelect(loc); onMobileClose(); }}
-                onRemove={() => onRemove(loc.id)}
-              />
-            ))}
+            <div className="grid grid-cols-2 gap-3">
+              {locations.map(loc => (
+                <SavedLocationCard
+                  key={loc.id}
+                  location={loc}
+                  isActive={isActive(loc, activeCoords)}
+                  unit={unit}
+                  onSelect={() => { onSelect(loc); onMobileClose(); }}
+                  onRemove={() => onRemove(loc.id)}
+                />
+              ))}
+            </div>
           </div>
         </>
       )}
