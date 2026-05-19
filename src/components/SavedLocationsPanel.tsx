@@ -35,7 +35,7 @@ export function SavedLocationsPanel({
   return (
     <>
       {/* Desktop: fixed left sidebar */}
-      <aside className="hidden lg:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-3 w-52 z-30">
+      <aside className="hidden min-[1400px]:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-3 w-52 z-30">
         <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">Saved</p>
         {locations.map(loc => (
           <SavedLocationCard
@@ -53,7 +53,7 @@ export function SavedLocationsPanel({
       <button
         type="button"
         onClick={onMobileOpen}
-        className="lg:hidden self-start flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors text-white/80 text-sm font-medium rounded-full px-4 py-1.5 focus:outline-none"
+        className="min-[1400px]:hidden self-start flex items-center gap-2 bg-white/10 hover:bg-white/20 transition-colors text-white/80 text-sm font-medium rounded-full px-4 py-1.5 focus:outline-none"
       >
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
           <path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
@@ -65,10 +65,10 @@ export function SavedLocationsPanel({
       {mobileOpen && (
         <>
           <div
-            className="lg:hidden fixed inset-0 bg-black/40 z-40"
+            className="min-[1400px]:hidden fixed inset-0 bg-black/40 z-40"
             onClick={onMobileClose}
           />
-          <div className="lg:hidden fixed bottom-0 inset-x-0 z-50 bg-white/10 backdrop-blur-xl rounded-t-3xl p-6 flex flex-col gap-4">
+          <div className="min-[1400px]:hidden fixed bottom-0 inset-x-0 z-50 bg-white/10 backdrop-blur-xl rounded-t-3xl p-6 flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <p className="text-white font-medium">Saved Locations</p>
               <button
