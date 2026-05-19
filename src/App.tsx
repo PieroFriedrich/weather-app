@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import type { Coordinates, GeocodingResult, SavedLocation } from "./types/weather";
+import type {
+  Coordinates,
+  GeocodingResult,
+  SavedLocation,
+} from "./types/weather";
 import { useGeolocation } from "./hooks/useGeolocation";
 import { useWeather } from "./hooks/useWeather";
 import { useSavedLocations } from "./hooks/useSavedLocations";
@@ -49,13 +53,17 @@ export default function App() {
 
   function handleSave() {
     if (!activeCoords) return;
-    add({ id: crypto.randomUUID(), name: activeCityName, coords: activeCoords });
+    add({
+      id: crypto.randomUUID(),
+      name: activeCityName,
+      coords: activeCoords,
+    });
   }
 
   function handleUnsave() {
     if (!activeCoords) return;
     const found = savedLocations.find(
-      loc =>
+      (loc) =>
         Math.abs(loc.coords.latitude - activeCoords.latitude) < 0.01 &&
         Math.abs(loc.coords.longitude - activeCoords.longitude) < 0.01,
     );
@@ -68,13 +76,16 @@ export default function App() {
       style={{ background: theme.gradient }}
     >
       {theme.overlayClass && (
-        <div className={`absolute inset-0 pointer-events-none ${theme.overlayClass}`} aria-hidden="true" />
+        <div
+          className={`absolute inset-0 pointer-events-none ${theme.overlayClass}`}
+          aria-hidden="true"
+        />
       )}
       <h1 className="text-3xl font-light text-white tracking-widest">
         Weather
       </h1>
 
-      <div className="w-full max-w-sm sm:w-max sm:max-w-none sm:min-w-96 flex flex-col gap-6">
+      <div className="w-full max-w-sm sm:w-full sm:max-w-4xl flex flex-col gap-6">
         <SearchBar onSelect={handleSelect} />
         <SavedLocationsPanel
           locations={savedLocations}
@@ -99,14 +110,18 @@ export default function App() {
         )}
 
         {(weather.loading || (weather.data && !cityReady)) && (
-          <p className="text-white/50 text-sm animate-pulse">Loading weather…</p>
+          <p className="text-white/50 text-sm animate-pulse">
+            Loading weather…
+          </p>
         )}
 
-        {weather.error && <p className="text-red-300 text-sm">{weather.error}</p>}
+        {weather.error && (
+          <p className="text-red-300 text-sm">{weather.error}</p>
+        )}
 
         {weather.data && !weather.loading && cityReady && (
           <div className="flex flex-col gap-4">
-            <div className="flex flex-col sm:flex-row items-stretch gap-4">
+            <div className="flex flex-col min-[850px]:flex-row items-stretch gap-4">
               <CurrentWeather
                 data={weather.data}
                 cityName={activeCityName}
@@ -116,7 +131,9 @@ export default function App() {
                 onSave={handleSave}
                 onUnsave={handleUnsave}
               />
-              {showForecast && <ForecastStrip forecast={weather.forecast} unit={unit} />}
+              {showForecast && (
+                <ForecastStrip forecast={weather.forecast} unit={unit} />
+              )}
             </div>
             {showForecast && weather.hourly.length > 0 && (
               <HourlyChart hourly={weather.hourly} unit={unit} />

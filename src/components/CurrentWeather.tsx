@@ -21,7 +21,7 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
     : Math.round((data.feelsLike - 32) * 5 / 9);
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm text-white">
+    <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm sm:max-w-none min-[850px]:w-1/2 min-[850px]:shrink-0 text-white">
       <div className="flex items-center justify-between mb-1">
         <p className="text-white/60 text-sm font-medium uppercase tracking-widest">{cityName}</p>
         <button
