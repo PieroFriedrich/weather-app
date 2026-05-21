@@ -29,10 +29,13 @@ A clean, responsive weather app that shows current conditions and a 7-day foreca
 
 - **Auto-location** — detects your coordinates on load and fetches local weather instantly
 - **City search** — debounced autocomplete surfaces matching cities as you type
-- **Current conditions** — temperature, weather description, humidity, and wind speed
+- **Current conditions** — temperature, feels-like, humidity, wind speed, rain probability, and sunrise/sunset times
+- **24-hour chart** — smooth hourly temperature curve with precipitation overlay
 - **7-day forecast** — daily high/low with weather icons for the week ahead
 - **°F / °C toggle** — switch units without re-fetching data
 - **Dynamic backgrounds** — gradient and animation change per weather condition (sun, rain, snow, fog, thunderstorm, and more)
+- **Saved locations** — bookmark cities and see their live weather at a glance; desktop sidebar or mobile drawer
+- **Share** — copy a shareable URL that restores the exact city and unit on open
 
 ## Stack
 
