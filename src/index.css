@@ -10,13 +10,22 @@ body {
 
 /* Weather background overlays */
 .weather-sunny {
-  background: radial-gradient(ellipse at 70% 15%, rgba(251, 191, 36, 0.2) 0%, transparent 55%);
+  background: radial-gradient(
+    ellipse at 70% 15%,
+    rgba(251, 191, 36, 0.2) 0%,
+    transparent 55%
+  );
   animation: sun-pulse 5s ease-in-out infinite;
 }
 
 @keyframes sun-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .weather-rain {
@@ -32,29 +41,52 @@ body {
 }
 
 @keyframes rain-fall {
-  from { background-position: 0 0; }
-  to { background-position: -12px 20px; }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -12px 20px;
+  }
 }
 
 .weather-snow {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.4) 1px,
+    transparent 1px
+  );
   background-size: 25px 25px;
   animation: snow-fall 5s linear infinite;
 }
 
 @keyframes snow-fall {
-  from { background-position: 0 0; }
-  to { background-position: 8px 50px; }
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 8px 50px;
+  }
 }
 
 .weather-fog {
-  background: linear-gradient(to bottom, rgba(209, 213, 219, 0.25), transparent 70%);
+  background: linear-gradient(
+    to bottom,
+    rgba(209, 213, 219, 0.25),
+    transparent 70%
+  );
   animation: fog-drift 8s ease-in-out infinite;
 }
 
 @keyframes fog-drift {
-  0%, 100% { opacity: 0.4; transform: translateX(0); }
-  50% { opacity: 0.7; transform: translateX(15px); }
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(15px);
+  }
 }
 
 .weather-thunder {
@@ -62,6 +94,28 @@ body {
 }
 
 @keyframes thunder-flash {
-  0%, 88%, 92%, 94%, 100% { background: rgba(255, 255, 255, 0); }
-  89%, 93% { background: rgba(255, 255, 255, 0.06); }
+  0%,
+  88%,
+  92%,
+  94%,
+  100% {
+    background: rgba(255, 255, 255, 0);
+  }
+  89%,
+  93% {
+    background: rgba(255, 255, 255, 0.06);
+  }
+}
+
+@media (min-width: 1400px) {
+  .desktop-3col {
+    display: grid;
+    grid-template-columns: 300px 1fr 400px;
+    align-items: start;
+    gap: 1.5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: none;
+    width: 100%;
+  }
 }

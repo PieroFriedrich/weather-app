@@ -1,10 +1,10 @@
-import type { SavedLocation, Coordinates } from '../types/weather';
-import { SavedLocationCard } from './SavedLocationCard';
+import type { SavedLocation, Coordinates } from "../types/weather";
+import { SavedLocationCard } from "./SavedLocationCard";
 
 interface Props {
   locations: SavedLocation[];
   activeCoords: Coordinates | null;
-  unit: 'F' | 'C';
+  unit: "F" | "C";
   mobileOpen: boolean;
   onMobileOpen: () => void;
   onMobileClose: () => void;
@@ -12,7 +12,10 @@ interface Props {
   onRemove: (id: string) => void;
 }
 
-function isActive(loc: SavedLocation, activeCoords: Coordinates | null): boolean {
+function isActive(
+  loc: SavedLocation,
+  activeCoords: Coordinates | null,
+): boolean {
   if (!activeCoords) return false;
   return (
     Math.abs(loc.coords.latitude - activeCoords.latitude) < 0.01 &&
@@ -34,10 +37,12 @@ export function SavedLocationsPanel({
 
   return (
     <>
-      {/* Desktop: fixed left sidebar */}
-      <aside className="hidden min-[1400px]:flex fixed left-4 top-1/2 -translate-y-1/2 flex-col gap-3 w-52 z-30">
-        <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">Saved</p>
-        {locations.map(loc => (
+      {/* Desktop: in-flow left column */}
+      <aside className="hidden min-[1400px]:flex flex-col gap-3 w-full sticky top-6">
+        <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">
+          Saved
+        </p>
+        {locations.map((loc) => (
           <SavedLocationCard
             key={loc.id}
             location={loc}
@@ -81,13 +86,16 @@ export function SavedLocationsPanel({
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {locations.map(loc => (
+              {locations.map((loc) => (
                 <SavedLocationCard
                   key={loc.id}
                   location={loc}
                   isActive={isActive(loc, activeCoords)}
                   unit={unit}
-                  onSelect={() => { onSelect(loc); onMobileClose(); }}
+                  onSelect={() => {
+                    onSelect(loc);
+                    onMobileClose();
+                  }}
                   onRemove={() => onRemove(loc.id)}
                 />
               ))}

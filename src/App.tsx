@@ -92,7 +92,12 @@ export default function App() {
 
   async function handleShare() {
     if (!activeCoords) return;
-    const url = buildShareUrl(activeCityName, activeCoords.latitude, activeCoords.longitude, unit);
+    const url = buildShareUrl(
+      activeCityName,
+      activeCoords.latitude,
+      activeCoords.longitude,
+      unit,
+    );
     await triggerShare(url, activeCityName);
   }
 
@@ -111,80 +116,88 @@ export default function App() {
         Weather
       </h1>
 
-      <div className="w-full max-w-sm sm:w-full sm:max-w-4xl flex flex-col gap-6">
-        <SearchBar onSelect={handleSelect} />
-        <SavedLocationsPanel
-          locations={savedLocations}
-          activeCoords={activeCoords}
-          unit={unit}
-          mobileOpen={savedPanelOpen}
-          onMobileOpen={() => setSavedPanelOpen(true)}
-          onMobileClose={() => setSavedPanelOpen(false)}
-          onSelect={handleSelectSaved}
-          onRemove={remove}
-        />
+      {/* Desktop: 3-column grid. Mobile: single column. */}
+      <div className="w-full max-w-sm sm:w-full sm:max-w-4xl flex flex-col gap-6 desktop-3col">
+        {/* Col 1: Saved Locations — wrapper ensures col-start-1 even when panel is empty */}
+        <div className="min-[1400px]:col-start-1">
+          <SavedLocationsPanel
+            locations={savedLocations}
+            activeCoords={activeCoords}
+            unit={unit}
+            mobileOpen={savedPanelOpen}
+            onMobileOpen={() => setSavedPanelOpen(true)}
+            onMobileClose={() => setSavedPanelOpen(false)}
+            onSelect={handleSelectSaved}
+            onRemove={remove}
+          />
+        </div>
 
-        {/* Desktop: fixed right map sidebar */}
-        {activeCoords && (
-          <aside className="hidden min-[1400px]:flex fixed right-4 top-1/2 -translate-y-1/2 flex-col gap-3 w-64 z-30">
-            <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">Map</p>
-            <div className="rounded-3xl overflow-hidden shadow-2xl" style={{ height: '380px' }}>
-              <CityMap coords={activeCoords} />
-            </div>
-          </aside>
-        )}
+        {/* Col 2: Main content */}
+        <div className="min-[1400px]:col-start-2 flex flex-col gap-6">
+          <SearchBar onSelect={handleSelect} />
 
-        {geo.loading && !coords && (
-          <p className="text-white/50 text-sm animate-pulse">
-            Detecting your location…
-          </p>
-        )}
+          {geo.loading && !coords && (
+            <p className="text-white/50 text-sm animate-pulse">
+              Detecting your location…
+            </p>
+          )}
 
-        {geo.error && !coords && !weather.data && !weather.loading && (
-          <p className="text-white/50 text-sm">
-            {geo.error} — search for a city above
-          </p>
-        )}
+          {geo.error && !coords && !weather.data && !weather.loading && (
+            <p className="text-white/50 text-sm">
+              {geo.error} — search for a city above
+            </p>
+          )}
 
-        {(weather.loading || (weather.data && !cityReady)) && (
-          <p className="text-white/50 text-sm animate-pulse">
-            Loading weather…
-          </p>
-        )}
+          {(weather.loading || (weather.data && !cityReady)) && (
+            <p className="text-white/50 text-sm animate-pulse">
+              Loading weather…
+            </p>
+          )}
 
-        {weather.error && (
-          <p className="text-red-300 text-sm">{weather.error}</p>
-        )}
+          {weather.error && (
+            <p className="text-red-300 text-sm">{weather.error}</p>
+          )}
 
-        {weather.data && !weather.loading && cityReady && (
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col min-[850px]:flex-row items-stretch gap-4">
-              <CurrentWeather
-                data={weather.data}
-                cityName={activeCityName}
-                unit={unit}
-                onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
-                isSaved={activeCoords ? has(activeCoords) : false}
-                onSave={handleSave}
-                onUnsave={handleUnsave}
-                onShare={handleShare}
-              />
-              {showForecast && (
-                <ForecastStrip forecast={weather.forecast} unit={unit} />
+          {weather.data && !weather.loading && cityReady && (
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col min-[850px]:flex-row items-stretch gap-4">
+                <CurrentWeather
+                  data={weather.data}
+                  cityName={activeCityName}
+                  unit={unit}
+                  onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+                  isSaved={activeCoords ? has(activeCoords) : false}
+                  onSave={handleSave}
+                  onUnsave={handleUnsave}
+                  onShare={handleShare}
+                />
+                {showForecast && (
+                  <ForecastStrip forecast={weather.forecast} unit={unit} />
+                )}
+              </div>
+              {showForecast && weather.hourly.length > 0 && (
+                <HourlyChart hourly={weather.hourly} unit={unit} />
+              )}
+              {showForecast && weather.hourly.length > 0 && (
+                <PrecipChart hourly={weather.hourly} />
+              )}
+              {/* Map shown here on mobile only */}
+              {activeCoords && (
+                <div className="min-[1400px]:hidden relative z-0">
+                  <CityMap coords={activeCoords} />
+                </div>
               )}
             </div>
-            {showForecast && weather.hourly.length > 0 && (
-              <HourlyChart hourly={weather.hourly} unit={unit} />
-            )}
-            {showForecast && weather.hourly.length > 0 && (
-              <PrecipChart hourly={weather.hourly} />
-            )}
-            {/* Mobile: map in the normal flow */}
-            {activeCoords && (
-              <div className="min-[1400px]:hidden rounded-3xl overflow-hidden shadow-2xl w-full" style={{ height: '280px' }}>
-                <CityMap coords={activeCoords} />
-              </div>
-            )}
+          )}
+        </div>
+
+        {/* Col 3: Map – desktop only */}
+        {activeCoords && (
+          <div
+            className="min-[1400px]:col-start-3 hidden min-[1400px]:block sticky top-6 rounded-3xl overflow-hidden shadow-2xl"
+            style={{ height: "calc(100vh - 3rem)" }}
+          >
+            <CityMap coords={activeCoords} className="w-full h-full" />
           </div>
         )}
       </div>
