@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { CurrentWeather as WeatherData } from '../types/weather';
 import { WeatherIcon } from './WeatherIcon';
 
@@ -9,9 +10,20 @@ interface Props {
   isSaved: boolean;
   onSave: () => void;
   onUnsave: () => void;
+  onShare: () => Promise<void>;
 }
 
-export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, onSave, onUnsave }: Props) {
+export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, onSave, onUnsave, onShare }: Props) {
+  const [shareConfirmed, setShareConfirmed] = useState(false);
+
+  async function handleShare() {
+    try {
+      await onShare();
+      setShareConfirmed(true);
+      setTimeout(() => setShareConfirmed(false), 2000);
+    } catch { /* clipboard write failed */ }
+  }
+
   const displayTemp = unit === 'F'
     ? data.temperature
     : Math.round((data.temperature - 32) * 5 / 9);
@@ -24,22 +36,40 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
     <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm sm:max-w-none min-[850px]:w-1/2 min-[850px]:shrink-0 text-white">
       <div className="flex items-center justify-between mb-1">
         <p className="text-white/60 text-sm font-medium uppercase tracking-widest">{cityName}</p>
-        <button
-          type="button"
-          onClick={isSaved ? onUnsave : onSave}
-          aria-label={isSaved ? 'Remove from saved locations' : 'Save this location'}
-          className="text-white/50 hover:text-white transition-colors focus:outline-none"
-        >
-          {isSaved ? (
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-              <path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
-            </svg>
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleShare}
+            aria-label="Share this location"
+            className="text-white/50 hover:text-white transition-colors focus:outline-none"
+          >
+            {shareConfirmed ? (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={isSaved ? onUnsave : onSave}
+            aria-label={isSaved ? 'Remove from saved locations' : 'Save this location'}
+            className="text-white/50 hover:text-white transition-colors focus:outline-none"
+          >
+            {isSaved ? (
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+                <path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="flex items-start justify-between mb-6">

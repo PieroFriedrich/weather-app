@@ -15,6 +15,7 @@ import { SearchBar } from "./components/SearchBar";
 import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
+import { buildShareUrl, triggerShare } from "./utils/share";
 
 export default function App() {
   const geo = useGeolocation();
@@ -24,6 +25,24 @@ export default function App() {
   const [unit, setUnit] = useState<"F" | "C">("C");
   const { savedLocations, add, remove, has } = useSavedLocations();
   const [savedPanelOpen, setSavedPanelOpen] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const city = params.get("city");
+    const lat = params.get("lat");
+    const lon = params.get("lon");
+    const u = params.get("unit");
+    if (city && lat && lon) {
+      const parsedLat = parseFloat(lat);
+      const parsedLon = parseFloat(lon);
+      if (!isNaN(parsedLat) && !isNaN(parsedLon)) {
+        setCityName(city);
+        setCoords({ latitude: parsedLat, longitude: parsedLon });
+        if (u === "F" || u === "C") setUnit(u);
+        history.replaceState(null, "", window.location.pathname);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!geo.coords || coords) return;
@@ -68,6 +87,12 @@ export default function App() {
         Math.abs(loc.coords.longitude - activeCoords.longitude) < 0.01,
     );
     if (found) remove(found.id);
+  }
+
+  async function handleShare() {
+    if (!activeCoords) return;
+    const url = buildShareUrl(activeCityName, activeCoords.latitude, activeCoords.longitude, unit);
+    await triggerShare(url, activeCityName);
   }
 
   return (
@@ -131,6 +156,7 @@ export default function App() {
                 isSaved={activeCoords ? has(activeCoords) : false}
                 onSave={handleSave}
                 onUnsave={handleUnsave}
+                onShare={handleShare}
               />
               {showForecast && (
                 <ForecastStrip forecast={weather.forecast} unit={unit} />
