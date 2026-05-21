@@ -20,6 +20,8 @@ interface OpenMeteoResponse {
     temperature_2m_max: number[];
     temperature_2m_min: number[];
     precipitation_probability_max: number[];
+    sunrise: string[];
+    sunset: string[];
   };
 }
 
@@ -32,11 +34,19 @@ export async function fetchWeather(
     `?latitude=${latitude}&longitude=${longitude}` +
     `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code` +
     `&hourly=temperature_2m,precipitation_probability` +
-    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max` +
+    `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset` +
     `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
   const res = await fetch(url);
   if (!res.ok) throw new Error('Weather fetch failed');
   const data: OpenMeteoResponse = await res.json();
+
+  function formatSunTime(isoLocal: string): string {
+    const [, time] = isoLocal.split('T');
+    const [h, m] = time.split(':').map(Number);
+    const suffix = h >= 12 ? 'PM' : 'AM';
+    const hour = h % 12 === 0 ? 12 : h % 12;
+    return `${hour}:${String(m).padStart(2, '0')} ${suffix}`;
+  }
 
   const current: CurrentWeather = {
     temperature: Math.round(data.current.temperature_2m),
@@ -45,6 +55,8 @@ export async function fetchWeather(
     windSpeed: Math.round(data.current.wind_speed_10m),
     weatherCode: data.current.weather_code,
     precipitationProbability: data.daily.precipitation_probability_max[0] ?? 0,
+    sunrise: formatSunTime(data.daily.sunrise[0]),
+    sunset: formatSunTime(data.daily.sunset[0]),
   };
 
   const forecast: DailyForecast[] = data.daily.time.map((date, i) => ({

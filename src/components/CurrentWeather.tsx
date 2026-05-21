@@ -102,6 +102,16 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
           <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Rain</p>
           <p className="text-2xl font-light">{data.precipitationProbability}%</p>
         </div>
+        <div className="bg-white/10 rounded-2xl p-4 col-span-3 grid grid-cols-2 gap-3">
+          <div>
+            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">🌅 Sunrise</p>
+            <p className="text-xl font-light">{data.sunrise}</p>
+          </div>
+          <div>
+            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">🌇 Sunset</p>
+            <p className="text-xl font-light">{data.sunset}</p>
+          </div>
+        </div>
       </div>
     </div>
   );

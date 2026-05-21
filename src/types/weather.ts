@@ -19,6 +19,8 @@ export interface CurrentWeather {
   weatherCode: number;
   precipitationProbability: number;
   feelsLike: number;
+  sunrise: string;
+  sunset: string;
 }
 
 export interface DailyForecast {
