@@ -124,6 +124,16 @@ export default function App() {
           onRemove={remove}
         />
 
+        {/* Desktop: fixed right map sidebar */}
+        {activeCoords && (
+          <aside className="hidden min-[1400px]:flex fixed right-4 top-1/2 -translate-y-1/2 flex-col gap-3 w-64 z-30">
+            <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">Map</p>
+            <div className="rounded-3xl overflow-hidden shadow-2xl" style={{ height: '380px' }}>
+              <CityMap coords={activeCoords} />
+            </div>
+          </aside>
+        )}
+
         {geo.loading && !coords && (
           <p className="text-white/50 text-sm animate-pulse">
             Detecting your location…
@@ -169,8 +179,11 @@ export default function App() {
             {showForecast && weather.hourly.length > 0 && (
               <PrecipChart hourly={weather.hourly} />
             )}
+            {/* Mobile: map in the normal flow */}
             {activeCoords && (
-              <CityMap coords={activeCoords} />
+              <div className="min-[1400px]:hidden rounded-3xl overflow-hidden shadow-2xl w-full" style={{ height: '280px' }}>
+                <CityMap coords={activeCoords} />
+              </div>
             )}
           </div>
         )}

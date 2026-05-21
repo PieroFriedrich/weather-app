@@ -28,21 +28,19 @@ interface Props {
 
 export function CityMap({ coords }: Props) {
   return (
-    <div className="rounded-3xl overflow-hidden shadow-2xl w-full" style={{ height: '280px' }}>
-      <MapContainer
-        center={[coords.latitude, coords.longitude]}
-        zoom={10}
-        style={{ height: '100%', width: '100%' }}
-        scrollWheelZoom={false}
-        zoomControl={true}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-        />
-        <Marker position={[coords.latitude, coords.longitude]} icon={pinIcon} />
-        <Recenter coords={coords} />
-      </MapContainer>
-    </div>
+    <MapContainer
+      center={[coords.latitude, coords.longitude]}
+      zoom={10}
+      style={{ height: '100%', width: '100%' }}
+      scrollWheelZoom={false}
+      zoomControl={true}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+      />
+      <Marker position={[coords.latitude, coords.longitude]} icon={pinIcon} />
+      <Recenter coords={coords} />
+    </MapContainer>
   );
 }
