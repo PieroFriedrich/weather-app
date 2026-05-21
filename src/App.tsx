@@ -13,6 +13,7 @@ import { HourlyChart } from "./components/HourlyChart";
 import { PrecipChart } from "./components/PrecipChart";
 import { SearchBar } from "./components/SearchBar";
 import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
+import { CityMap } from "./components/CityMap";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
 import { buildShareUrl, triggerShare } from "./utils/share";
@@ -167,6 +168,9 @@ export default function App() {
             )}
             {showForecast && weather.hourly.length > 0 && (
               <PrecipChart hourly={weather.hourly} />
+            )}
+            {activeCoords && (
+              <CityMap coords={activeCoords} />
             )}
           </div>
         )}
