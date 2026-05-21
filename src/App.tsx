@@ -179,7 +179,7 @@ export default function App() {
               )}
               {/* Map shown here on mobile only */}
               {activeCoords && (
-                <div className="min-[1400px]:hidden">
+                <div className="min-[1400px]:hidden relative z-0">
                   <CityMap coords={activeCoords} />
                 </div>
               )}
