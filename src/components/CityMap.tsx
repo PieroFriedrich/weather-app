@@ -24,11 +24,12 @@ function Recenter({ coords }: { coords: Coordinates }) {
 
 interface Props {
   coords: Coordinates;
+  className?: string;
 }
 
-export function CityMap({ coords }: Props) {
+export function CityMap({ coords, className }: Props) {
   return (
-    <div className="rounded-3xl overflow-hidden shadow-2xl w-full" style={{ height: '280px' }}>
+    <div className={className ?? "rounded-3xl overflow-hidden shadow-2xl w-full"} style={className ? undefined : { height: '280px' }}>
       <MapContainer
         center={[coords.latitude, coords.longitude]}
         zoom={10}
