@@ -103,7 +103,7 @@ export default function App() {
 
   return (
     <div
-      className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 gap-6 overflow-hidden transition-all duration-1000"
+      className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-8 gap-6 overflow-hidden transition-all duration-1000 py-5"
       style={{ background: theme.gradient }}
     >
       {theme.overlayClass && (

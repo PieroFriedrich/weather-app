@@ -1,11 +1,11 @@
-import { useState } from 'react';
-import type { CurrentWeather as WeatherData } from '../types/weather';
-import { WeatherIcon } from './WeatherIcon';
+import { useState } from "react";
+import type { CurrentWeather as WeatherData } from "../types/weather";
+import { WeatherIcon } from "./WeatherIcon";
 
 interface Props {
   data: WeatherData;
   cityName: string;
-  unit: 'F' | 'C';
+  unit: "F" | "C";
   onToggleUnit: () => void;
   isSaved: boolean;
   onSave: () => void;
@@ -13,7 +13,16 @@ interface Props {
   onShare: () => Promise<void>;
 }
 
-export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, onSave, onUnsave, onShare }: Props) {
+export function CurrentWeather({
+  data,
+  cityName,
+  unit,
+  onToggleUnit,
+  isSaved,
+  onSave,
+  onUnsave,
+  onShare,
+}: Props) {
   const [shareConfirmed, setShareConfirmed] = useState(false);
 
   async function handleShare() {
@@ -21,21 +30,25 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
       await onShare();
       setShareConfirmed(true);
       setTimeout(() => setShareConfirmed(false), 2000);
-    } catch { /* clipboard write failed */ }
+    } catch {
+      /* clipboard write failed */
+    }
   }
 
-  const displayTemp = unit === 'F'
-    ? data.temperature
-    : Math.round((data.temperature - 32) * 5 / 9);
+  const displayTemp =
+    unit === "F"
+      ? data.temperature
+      : Math.round(((data.temperature - 32) * 5) / 9);
 
-  const displayFeelsLike = unit === 'F'
-    ? data.feelsLike
-    : Math.round((data.feelsLike - 32) * 5 / 9);
+  const displayFeelsLike =
+    unit === "F" ? data.feelsLike : Math.round(((data.feelsLike - 32) * 5) / 9);
 
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm sm:max-w-none min-[850px]:w-1/2 min-[850px]:shrink-0 text-white">
       <div className="flex items-center justify-between mb-1">
-        <p className="text-white/60 text-sm font-medium uppercase tracking-widest">{cityName}</p>
+        <p className="text-white/60 text-sm font-medium uppercase tracking-widest">
+          {cityName}
+        </p>
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -44,19 +57,41 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
             className="text-white/50 hover:text-white transition-colors focus:outline-none"
           >
             {shareConfirmed ? (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M4.5 12.75l6 6 9-13.5"
+                />
               </svg>
             ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+                />
               </svg>
             )}
           </button>
           <button
             type="button"
             onClick={isSaved ? onUnsave : onSave}
-            aria-label={isSaved ? 'Remove from saved locations' : 'Save this location'}
+            aria-label={
+              isSaved ? "Remove from saved locations" : "Save this location"
+            }
             className="text-white/50 hover:text-white transition-colors focus:outline-none"
           >
             {isSaved ? (
@@ -64,8 +99,18 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
                 <path d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
               </svg>
             ) : (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17 3H7a2 2 0 0 0-2 2v16l7-3 7 3V5a2 2 0 0 0-2-2z"
+                />
               </svg>
             )}
           </button>
@@ -74,8 +119,12 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
 
       <div className="flex items-start justify-between mb-6">
         <div>
-          <div className="text-8xl font-thin">{displayTemp}°{unit}</div>
-          <p className="text-white/50 text-sm mt-1">Feels like {displayFeelsLike}°{unit}</p>
+          <div className="text-8xl font-thin">
+            {displayTemp}°{unit}
+          </div>
+          <p className="text-white/50 text-sm mt-1">
+            Feels like {displayFeelsLike}°{unit}
+          </p>
         </div>
         <button
           type="button"
@@ -83,32 +132,52 @@ export function CurrentWeather({ data, cityName, unit, onToggleUnit, isSaved, on
           className="mt-2 flex bg-white/10 rounded-xl overflow-hidden text-sm font-medium"
           aria-label="Toggle temperature unit"
         >
-          <span className={`px-3 py-1.5 transition-colors ${unit === 'F' ? 'bg-white/20 text-white' : 'text-white/40'}`}>°F</span>
-          <span className={`px-3 py-1.5 transition-colors ${unit === 'C' ? 'bg-white/20 text-white' : 'text-white/40'}`}>°C</span>
+          <span
+            className={`px-3 py-1.5 transition-colors ${unit === "F" ? "bg-white/20 text-white" : "text-white/40"}`}
+          >
+            °F
+          </span>
+          <span
+            className={`px-3 py-1.5 transition-colors ${unit === "C" ? "bg-white/20 text-white" : "text-white/40"}`}
+          >
+            °C
+          </span>
         </button>
       </div>
 
       <WeatherIcon code={data.weatherCode} />
       <div className="mt-6 grid grid-cols-3 gap-3">
         <div className="bg-white/10 rounded-2xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Humidity</p>
+          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+            Humidity
+          </p>
           <p className="text-2xl font-light">{data.humidity}%</p>
         </div>
         <div className="bg-white/10 rounded-2xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Wind</p>
+          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+            Wind
+          </p>
           <p className="text-2xl font-light">{data.windSpeed} mph</p>
         </div>
         <div className="bg-white/10 rounded-2xl p-4">
-          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">Rain</p>
-          <p className="text-2xl font-light">{data.precipitationProbability}%</p>
+          <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+            Rain
+          </p>
+          <p className="text-2xl font-light">
+            {data.precipitationProbability}%
+          </p>
         </div>
-        <div className="bg-white/10 rounded-2xl p-4 col-span-3 grid grid-cols-2 gap-3">
+        <div className="bg-white/10 rounded-2xl p-4 col-span-3 grid grid-cols-2 gap-3 text-center">
           <div>
-            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">🌅 Sunrise</p>
+            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+              🌅 Sunrise
+            </p>
             <p className="text-xl font-light">{data.sunrise}</p>
           </div>
           <div>
-            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">🌇 Sunset</p>
+            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+              🌇 Sunset
+            </p>
             <p className="text-xl font-light">{data.sunset}</p>
           </div>
         </div>
