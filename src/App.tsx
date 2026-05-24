@@ -14,6 +14,7 @@ import { PrecipChart } from "./components/PrecipChart";
 import { SearchBar } from "./components/SearchBar";
 import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
 import { CityMap } from "./components/CityMap";
+import { UVIndexCard } from "./components/UVIndexCard";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
 import { buildShareUrl, triggerShare } from "./utils/share";
@@ -180,6 +181,9 @@ export default function App() {
               )}
               {showForecast && weather.hourly.length > 0 && (
                 <PrecipChart hourly={weather.hourly} />
+              )}
+              {showForecast && weather.forecast.length > 0 && (
+                <UVIndexCard uvIndex={weather.forecast[0].uvIndexMax} />
               )}
               {/* Map shown here on mobile only */}
               {activeCoords && (

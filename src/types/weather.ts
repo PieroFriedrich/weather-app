@@ -28,6 +28,7 @@ export interface DailyForecast {
   weatherCode: number;
   tempMax: number;
   tempMin: number;
+  uvIndexMax: number;
 }
 
 export interface HourlyPoint {
