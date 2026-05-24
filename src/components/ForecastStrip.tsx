@@ -1,5 +1,5 @@
 import type { DailyForecast } from '../types/weather';
-import { getWmoInfo } from '../utils/wmo';
+import { WeatherIcon } from './WeatherIcon';
 
 interface Props {
   forecast: DailyForecast[];
@@ -43,7 +43,7 @@ export function ForecastStrip({ forecast, unit }: Props) {
         return (
           <div key={day.date} className="flex items-center gap-2 sm:gap-3">
             <span className="text-white/60 text-xs sm:text-sm w-10 sm:w-12">{dayLabel(day.date)}</span>
-            <span className="text-base sm:text-xl leading-none">{getWmoInfo(day.weatherCode).icon}</span>
+            <WeatherIcon code={day.weatherCode} size="sm" showLabel={false} />
             <span className="text-white/50 text-xs sm:text-sm w-7 sm:w-9 text-right">{low}°</span>
             <div className="flex-1 relative h-1.5 sm:h-2 rounded-full bg-white/10">
               <div

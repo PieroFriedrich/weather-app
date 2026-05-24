@@ -34,6 +34,26 @@ export function getWmoInfo(code: number): WmoInfo {
   return wmoMap[code] ?? { label: 'Unknown', icon: '🌡️' };
 }
 
+export type WeatherIconKey =
+  | 'clear' | 'mainly-clear' | 'partly-cloudy' | 'overcast'
+  | 'fog' | 'drizzle' | 'rain' | 'snow'
+  | 'rain-showers' | 'snow-showers' | 'thunderstorm';
+
+export function getWeatherIconKey(code: number): WeatherIconKey {
+  if (code === 0)                 return 'clear';
+  if (code === 1)                 return 'mainly-clear';
+  if (code === 2)                 return 'partly-cloudy';
+  if (code === 3)                 return 'overcast';
+  if (code === 45 || code === 48) return 'fog';
+  if (code >= 51 && code <= 55)   return 'drizzle';
+  if (code >= 61 && code <= 65)   return 'rain';
+  if (code >= 71 && code <= 77)   return 'snow';
+  if (code >= 80 && code <= 82)   return 'rain-showers';
+  if (code === 85 || code === 86) return 'snow-showers';
+  if (code >= 95)                 return 'thunderstorm';
+  return 'clear';
+}
+
 export interface WeatherTheme {
   gradient: string;
   overlayClass: string;

@@ -107,6 +107,74 @@ body {
   }
 }
 
+/* ── SVG icon animations ─────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .sun-rays, .cloud-body, .bolt,
+  .rain-d1, .rain-d2, .rain-d3,
+  .drizzle-d1, .drizzle-d2, .drizzle-d3,
+  .icon-snow-f1, .icon-snow-f2, .icon-snow-f3,
+  .fog-s1, .fog-s2 { animation: none !important; }
+}
+
+.sun-rays, .cloud-body, .bolt,
+.rain-d1, .rain-d2, .rain-d3,
+.drizzle-d1, .drizzle-d2, .drizzle-d3,
+.icon-snow-f1, .icon-snow-f2, .icon-snow-f3,
+.fog-s1, .fog-s2 {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes icon-sun-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.sun-rays { animation: icon-sun-spin 10s linear infinite; }
+
+@keyframes icon-cloud-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-2px); }
+}
+.cloud-body { animation: icon-cloud-float 4s ease-in-out infinite; }
+
+@keyframes icon-rain-drop {
+  0%   { opacity: 0; transform: translateY(-4px); }
+  30%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(10px); }
+}
+.rain-d1 { animation: icon-rain-drop 0.8s ease-in infinite; }
+.rain-d2 { animation: icon-rain-drop 0.8s ease-in infinite 0.27s; }
+.rain-d3 { animation: icon-rain-drop 0.8s ease-in infinite 0.54s; }
+
+@keyframes icon-drizzle-drop {
+  0%   { opacity: 0; transform: translateY(-3px); }
+  30%  { opacity: 0.6; }
+  100% { opacity: 0; transform: translateY(8px); }
+}
+.drizzle-d1 { animation: icon-drizzle-drop 1.2s ease-in infinite; }
+.drizzle-d2 { animation: icon-drizzle-drop 1.2s ease-in infinite 0.4s; }
+.drizzle-d3 { animation: icon-drizzle-drop 1.2s ease-in infinite 0.8s; }
+
+@keyframes icon-snow-fall {
+  0%   { opacity: 0; transform: translate(0, -4px); }
+  40%  { opacity: 0.9; }
+  100% { opacity: 0; transform: translate(2px, 10px); }
+}
+.icon-snow-f1 { animation: icon-snow-fall 1.5s ease-in infinite; }
+.icon-snow-f2 { animation: icon-snow-fall 1.5s ease-in infinite 0.5s; }
+.icon-snow-f3 { animation: icon-snow-fall 1.5s ease-in infinite 1s; }
+
+/* fog-drift keyframe already exists above — reuse for icon fog stripes */
+.fog-s1 { animation: fog-drift 5s ease-in-out infinite; }
+.fog-s2 { animation: fog-drift 5s ease-in-out infinite 2.5s; }
+
+@keyframes icon-bolt-flash {
+  0%, 10%, 15%, 100% { opacity: 0.25; }
+  12%, 13%           { opacity: 1; }
+}
+.bolt { animation: icon-bolt-flash 4s ease-in-out infinite; }
+
 @media (min-width: 1400px) {
   .desktop-3col {
     display: grid;
