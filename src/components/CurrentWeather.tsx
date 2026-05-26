@@ -2,6 +2,15 @@ import { useState } from "react";
 import type { CurrentWeather as WeatherData } from "../types/weather";
 import { WeatherIcon } from "./WeatherIcon";
 
+function getAqiInfo(aqi: number): { label: string; colorClass: string } {
+  if (aqi <= 20) return { label: "Good", colorClass: "text-emerald-300" };
+  if (aqi <= 40) return { label: "Fair", colorClass: "text-lime-300" };
+  if (aqi <= 60) return { label: "Moderate", colorClass: "text-yellow-300" };
+  if (aqi <= 80) return { label: "Poor", colorClass: "text-orange-300" };
+  if (aqi <= 100) return { label: "Very Poor", colorClass: "text-red-400" };
+  return { label: "Extremely Poor", colorClass: "text-purple-400" };
+}
+
 interface Props {
   data: WeatherData;
   cityName: string;
@@ -11,6 +20,7 @@ interface Props {
   onSave: () => void;
   onUnsave: () => void;
   onShare: () => Promise<void>;
+  aqi?: number | null;
 }
 
 export function CurrentWeather({
@@ -22,6 +32,7 @@ export function CurrentWeather({
   onSave,
   onUnsave,
   onShare,
+  aqi,
 }: Props) {
   const [shareConfirmed, setShareConfirmed] = useState(false);
 
@@ -167,7 +178,7 @@ export function CurrentWeather({
             {data.precipitationProbability}%
           </p>
         </div>
-        <div className="bg-white/10 rounded-2xl p-4 col-span-3 grid grid-cols-2 gap-3 text-center">
+        <div className="bg-white/10 rounded-2xl p-4 col-span-3 grid grid-cols-3 gap-3 text-center">
           <div>
             <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
               🌅 Sunrise
@@ -179,6 +190,24 @@ export function CurrentWeather({
               🌇 Sunset
             </p>
             <p className="text-xl font-light">{data.sunset}</p>
+          </div>
+          <div>
+            <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
+              Air Quality
+            </p>
+            {aqi != null ? (
+              (() => {
+                const { label, colorClass } = getAqiInfo(aqi);
+                return (
+                  <>
+                    <p className={`text-xl font-light ${colorClass}`}>{aqi}</p>
+                    <p className={`text-xs mt-0.5 ${colorClass}`}>{label}</p>
+                  </>
+                );
+              })()
+            ) : (
+              <p className="text-xl font-light text-white/30">—</p>
+            )}
           </div>
         </div>
       </div>

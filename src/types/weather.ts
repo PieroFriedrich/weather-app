@@ -42,3 +42,7 @@ export interface SavedLocation {
   name: string;
   coords: Coordinates;
 }
+
+export interface AirQualityData {
+  aqi: number;
+}
