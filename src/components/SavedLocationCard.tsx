@@ -1,4 +1,6 @@
 import { useWeather } from '../hooks/useWeather';
+import { useHistoricalWeather } from '../hooks/useHistoricalWeather';
+import { Sparkline } from './Sparkline';
 import { getWeatherTheme } from '../utils/wmo';
 import type { SavedLocation } from '../types/weather';
 
@@ -16,6 +18,7 @@ function toC(f: number) {
 
 export function SavedLocationCard({ location, isActive, unit, onSelect, onRemove }: Props) {
   const weather = useWeather(location.coords);
+  const { temps } = useHistoricalWeather(location.coords);
   const theme = getWeatherTheme(weather.data?.weatherCode ?? -1);
 
   const current = weather.data
@@ -60,6 +63,7 @@ export function SavedLocationCard({ location, isActive, unit, onSelect, onRemove
             {low !== null && high !== null && (
               <p className="text-white/70 text-xs">{low}° / {high}°</p>
             )}
+            {temps !== null && <Sparkline temps={temps} unit={unit} />}
           </>
         )}
       </div>
