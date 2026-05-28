@@ -33,5 +33,14 @@ export function useSavedLocations() {
     );
   }
 
-  return { savedLocations, add, remove, has };
+  function reorder(fromIndex: number, toIndex: number) {
+    setSavedLocations(prev => {
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  }
+
+  return { savedLocations, add, remove, has, reorder };
 }

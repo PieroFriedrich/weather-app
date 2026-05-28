@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { SavedLocation, Coordinates } from "../types/weather";
 import { SavedLocationCard } from "./SavedLocationCard";
 
@@ -10,6 +11,7 @@ interface Props {
   onMobileClose: () => void;
   onSelect: (loc: SavedLocation) => void;
   onRemove: (id: string) => void;
+  onReorder: (from: number, to: number) => void;
 }
 
 function isActive(
@@ -23,6 +25,19 @@ function isActive(
   );
 }
 
+function GripIcon() {
+  return (
+    <svg viewBox="0 0 10 16" fill="currentColor" className="w-2.5 h-4">
+      <circle cx="2" cy="2" r="1.5" />
+      <circle cx="8" cy="2" r="1.5" />
+      <circle cx="2" cy="8" r="1.5" />
+      <circle cx="8" cy="8" r="1.5" />
+      <circle cx="2" cy="14" r="1.5" />
+      <circle cx="8" cy="14" r="1.5" />
+    </svg>
+  );
+}
+
 export function SavedLocationsPanel({
   locations,
   activeCoords,
@@ -32,25 +47,76 @@ export function SavedLocationsPanel({
   onMobileClose,
   onSelect,
   onRemove,
+  onReorder,
 }: Props) {
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [overIndex, setOverIndex] = useState<number | null>(null);
+
+  function handleDragStart(index: number) {
+    setDragIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    setOverIndex(index);
+  }
+
+  function handleDrop(toIndex: number) {
+    if (dragIndex !== null && toIndex !== dragIndex) {
+      onReorder(dragIndex, toIndex);
+    }
+    setDragIndex(null);
+    setOverIndex(null);
+  }
+
+  function handleDragEnd() {
+    setDragIndex(null);
+    setOverIndex(null);
+  }
+
   if (locations.length === 0) return null;
 
   return (
     <>
       {/* Desktop: in-flow left column */}
-      <aside className="hidden min-[1400px]:flex flex-col gap-3 w-full sticky top-6">
+      <aside
+        className="hidden min-[1400px]:flex flex-col gap-3 w-full sticky top-6"
+        onDragLeave={(e) => {
+          if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+            setOverIndex(null);
+          }
+        }}
+      >
         <p className="text-white/40 text-xs uppercase tracking-wider px-1 mb-1">
           Saved
         </p>
-        {locations.map((loc) => (
-          <SavedLocationCard
+        {locations.map((loc, i) => (
+          <div
             key={loc.id}
-            location={loc}
-            isActive={isActive(loc, activeCoords)}
-            unit={unit}
-            onSelect={() => onSelect(loc)}
-            onRemove={() => onRemove(loc.id)}
-          />
+            draggable
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDrop={() => handleDrop(i)}
+            onDragEnd={handleDragEnd}
+            className={[
+              "relative group cursor-grab active:cursor-grabbing transition-opacity duration-150",
+              dragIndex === i ? "opacity-30" : "opacity-100",
+            ].join(" ")}
+          >
+            {overIndex === i && dragIndex !== null && dragIndex !== i && (
+              <div className="absolute -top-1.5 inset-x-2 h-0.5 bg-white/60 rounded-full z-10" />
+            )}
+            <div className="absolute left-2 top-1/2 -translate-y-1/2 text-white/20 group-hover:text-white/50 transition-colors pointer-events-none z-10">
+              <GripIcon />
+            </div>
+            <SavedLocationCard
+              location={loc}
+              isActive={isActive(loc, activeCoords)}
+              unit={unit}
+              onSelect={() => onSelect(loc)}
+              onRemove={() => onRemove(loc.id)}
+            />
+          </div>
         ))}
       </aside>
 

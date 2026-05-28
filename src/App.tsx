@@ -26,7 +26,7 @@ export default function App() {
   const [cityName, setCityName] = useState("");
   const [geoCityName, setGeoCityName] = useState<string | undefined>(undefined);
   const [unit, setUnit] = useState<"F" | "C">("C");
-  const { savedLocations, add, remove, has } = useSavedLocations();
+  const { savedLocations, add, remove, has, reorder } = useSavedLocations();
   const [savedPanelOpen, setSavedPanelOpen] = useState(false);
 
   useEffect(() => {
@@ -132,6 +132,7 @@ export default function App() {
             onMobileClose={() => setSavedPanelOpen(false)}
             onSelect={handleSelectSaved}
             onRemove={remove}
+            onReorder={reorder}
           />
         </div>
 
