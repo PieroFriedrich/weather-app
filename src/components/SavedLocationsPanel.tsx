@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { SavedLocation, Coordinates } from "../types/weather";
 import { SavedLocationCard } from "./SavedLocationCard";
 
@@ -49,8 +49,14 @@ export function SavedLocationsPanel({
   onRemove,
   onReorder,
 }: Props) {
+  // Desktop HTML5 drag state
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [overIndex, setOverIndex] = useState<number | null>(null);
+
+  // Mobile pointer drag state
+  const [touchDragIndex, setTouchDragIndex] = useState<number | null>(null);
+  const [touchOverIndex, setTouchOverIndex] = useState<number | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   function handleDragStart(index: number) {
     setDragIndex(index);
@@ -72,6 +78,35 @@ export function SavedLocationsPanel({
   function handleDragEnd() {
     setDragIndex(null);
     setOverIndex(null);
+  }
+
+  function handleTouchPointerDown(e: React.PointerEvent, index: number) {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setTouchDragIndex(index);
+    setTouchOverIndex(index);
+  }
+
+  function handleTouchPointerMove(e: React.PointerEvent) {
+    if (touchDragIndex === null) return;
+    const y = e.clientY;
+    const found = cardRefs.current.findIndex((el) => {
+      if (!el) return false;
+      const rect = el.getBoundingClientRect();
+      return y >= rect.top && y <= rect.bottom;
+    });
+    if (found !== -1) setTouchOverIndex(found);
+  }
+
+  function handleTouchPointerUp() {
+    if (
+      touchDragIndex !== null &&
+      touchOverIndex !== null &&
+      touchOverIndex !== touchDragIndex
+    ) {
+      onReorder(touchDragIndex, touchOverIndex);
+    }
+    setTouchDragIndex(null);
+    setTouchOverIndex(null);
   }
 
   if (locations.length === 0) return null;
@@ -151,19 +186,39 @@ export function SavedLocationsPanel({
                 ✕
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {locations.map((loc) => (
-                <SavedLocationCard
+            <div className="flex flex-col gap-3 overflow-y-auto max-h-[60vh]">
+              {locations.map((loc, i) => (
+                <div
                   key={loc.id}
-                  location={loc}
-                  isActive={isActive(loc, activeCoords)}
-                  unit={unit}
-                  onSelect={() => {
-                    onSelect(loc);
-                    onMobileClose();
-                  }}
-                  onRemove={() => onRemove(loc.id)}
-                />
+                  ref={(el) => { cardRefs.current[i] = el; }}
+                  className={[
+                    "relative group transition-opacity duration-150",
+                    touchDragIndex === i ? "opacity-30" : "opacity-100",
+                  ].join(" ")}
+                >
+                  {touchOverIndex === i && touchDragIndex !== null && touchDragIndex !== i && (
+                    <div className="absolute -top-1.5 inset-x-2 h-0.5 bg-white/60 rounded-full z-10" />
+                  )}
+                  <div
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-white/20 group-hover:text-white/50 transition-colors z-10 touch-none cursor-grab active:cursor-grabbing p-2 -ml-2"
+                    onPointerDown={(e) => handleTouchPointerDown(e, i)}
+                    onPointerMove={handleTouchPointerMove}
+                    onPointerUp={handleTouchPointerUp}
+                    onPointerCancel={handleTouchPointerUp}
+                  >
+                    <GripIcon />
+                  </div>
+                  <SavedLocationCard
+                    location={loc}
+                    isActive={isActive(loc, activeCoords)}
+                    unit={unit}
+                    onSelect={() => {
+                      onSelect(loc);
+                      onMobileClose();
+                    }}
+                    onRemove={() => onRemove(loc.id)}
+                  />
+                </div>
               ))}
             </div>
           </div>
