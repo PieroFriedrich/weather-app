@@ -21,6 +21,7 @@ interface Props {
   onUnsave: () => void;
   onShare: () => Promise<void>;
   aqi?: number | null;
+  avgTemp?: number | null;
 }
 
 export function CurrentWeather({
@@ -33,6 +34,7 @@ export function CurrentWeather({
   onUnsave,
   onShare,
   aqi,
+  avgTemp,
 }: Props) {
   const [shareConfirmed, setShareConfirmed] = useState(false);
 
@@ -53,6 +55,14 @@ export function CurrentWeather({
 
   const displayFeelsLike =
     unit === "F" ? data.feelsLike : Math.round(((data.feelsLike - 32) * 5) / 9);
+
+  const deltaF = avgTemp != null ? data.temperature - avgTemp : null;
+  const delta =
+    deltaF != null
+      ? unit === "C"
+        ? Math.round(deltaF * (5 / 9))
+        : Math.round(deltaF)
+      : null;
 
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-2xl w-full max-w-sm sm:max-w-none min-[850px]:w-1/2 min-[850px]:shrink-0 text-white">
@@ -136,6 +146,11 @@ export function CurrentWeather({
           <p className="text-white/50 text-sm mt-1">
             Feels like {displayFeelsLike}°{unit}
           </p>
+          {delta !== null && Math.abs(delta) >= 1 && (
+            <p className={`text-sm mt-0.5 ${delta > 0 ? "text-orange-300" : "text-blue-300"}`}>
+              {delta > 0 ? "↑" : "↓"} {Math.abs(delta)}°{unit} {delta > 0 ? "warmer" : "cooler"} than usual
+            </p>
+          )}
         </div>
         <button
           type="button"

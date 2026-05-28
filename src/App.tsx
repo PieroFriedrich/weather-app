@@ -19,6 +19,7 @@ import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
 import { buildShareUrl, triggerShare } from "./utils/share";
 import { useAirQuality } from "./hooks/useAirQuality";
+import { useYearAgoWeather } from "./hooks/useYearAgoWeather";
 
 export default function App() {
   const geo = useGeolocation();
@@ -59,6 +60,7 @@ export default function App() {
   const cityReady = coords !== null || geoCityName !== undefined;
   const weather = useWeather(activeCoords);
   const airQuality = useAirQuality(activeCoords);
+  const yearAgo = useYearAgoWeather(activeCoords);
   const theme = getWeatherTheme(weather.data?.weatherCode ?? -1);
   const showForecast = geo.coords !== null || coords !== null;
 
@@ -175,6 +177,7 @@ export default function App() {
                   onUnsave={handleUnsave}
                   onShare={handleShare}
                   aqi={airQuality.aqi}
+                  avgTemp={yearAgo.avgTemp}
                 />
                 {showForecast && (
                   <ForecastStrip forecast={weather.forecast} unit={unit} />
