@@ -26,7 +26,9 @@ export default function App() {
   const [coords, setCoords] = useState<Coordinates | null>(null);
   const [cityName, setCityName] = useState("");
   const [geoCityName, setGeoCityName] = useState<string | undefined>(undefined);
-  const [unit, setUnit] = useState<"F" | "C">("C");
+  const [unit, setUnit] = useState<"F" | "C">(
+    () => (localStorage.getItem("weather-unit") as "F" | "C") ?? "C",
+  );
   const { savedLocations, add, remove, has, reorder } = useSavedLocations();
   const [savedPanelOpen, setSavedPanelOpen] = useState(false);
 
@@ -171,7 +173,13 @@ export default function App() {
                   data={weather.data}
                   cityName={activeCityName}
                   unit={unit}
-                  onToggleUnit={() => setUnit((u) => (u === "F" ? "C" : "F"))}
+                  onToggleUnit={() =>
+                    setUnit((u) => {
+                      const next = u === "F" ? "C" : "F";
+                      localStorage.setItem("weather-unit", next);
+                      return next;
+                    })
+                  }
                   isSaved={activeCoords ? has(activeCoords) : false}
                   onSave={handleSave}
                   onUnsave={handleUnsave}
