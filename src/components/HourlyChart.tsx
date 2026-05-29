@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import type { HourlyPoint } from '../types/weather';
 
 interface Props {
@@ -39,20 +40,62 @@ function formatHour(time: string) {
 }
 
 export function HourlyChart({ hourly, unit }: Props) {
+  const [tab, setTab] = useState<'temp' | 'rain'>('temp');
+
   if (hourly.length === 0) return null;
-
-  const temps = hourly.map(h =>
-    unit === 'F' ? h.temperature : Math.round((h.temperature - 32) * 5 / 9),
-  );
-
-  const minTemp = Math.min(...temps);
-  const maxTemp = Math.max(...temps);
-  const spread = Math.max(maxTemp - minTemp, 4);
-  const yPad = spread * 0.15;
 
   const n = hourly.length;
   const xStep = PLOT_W / (n - 1);
   const toX = (i: number) => PAD_H + i * xStep;
+  const labelIdxs = Array.from({ length: n }, (_, i) => i).filter(i => i % 4 === 0);
+
+  return (
+    <div className="bg-white/10 backdrop-blur-md rounded-3xl px-4 pt-4 pb-3 shadow-2xl w-full">
+      <div className="flex items-center justify-between mb-1">
+        <p className="text-white/50 text-xs uppercase tracking-widest">Next 24 hours</p>
+        <div className="flex bg-white/10 rounded-xl overflow-hidden text-xs font-medium">
+          <button
+            type="button"
+            onClick={() => setTab('temp')}
+            className={`px-3 py-1 transition-colors ${tab === 'temp' ? 'bg-white/20 text-white' : 'text-white/40'}`}
+          >
+            Temp
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('rain')}
+            className={`px-3 py-1 transition-colors ${tab === 'rain' ? 'bg-white/20 text-white' : 'text-white/40'}`}
+          >
+            Rain
+          </button>
+        </div>
+      </div>
+
+      {tab === 'temp' ? (
+        <TempView hourly={hourly} unit={unit} n={n} toX={toX} labelIdxs={labelIdxs} />
+      ) : (
+        <RainView hourly={hourly} toX={toX} xStep={xStep} labelIdxs={labelIdxs} />
+      )}
+    </div>
+  );
+}
+
+function TempView({
+  hourly, unit, n, toX, labelIdxs,
+}: {
+  hourly: HourlyPoint[];
+  unit: 'F' | 'C';
+  n: number;
+  toX: (i: number) => number;
+  labelIdxs: number[];
+}) {
+  const temps = hourly.map(h =>
+    unit === 'F' ? h.temperature : Math.round((h.temperature - 32) * 5 / 9),
+  );
+  const minTemp = Math.min(...temps);
+  const maxTemp = Math.max(...temps);
+  const spread = Math.max(maxTemp - minTemp, 4);
+  const yPad = spread * 0.15;
   const toY = (t: number) =>
     PAD_TOP + PLOT_H - ((t - (minTemp - yPad)) / (spread + yPad * 2)) * PLOT_H;
 
@@ -60,79 +103,96 @@ export function HourlyChart({ hourly, unit }: Props) {
   const line = smoothPath(pts);
   const area = `${line} L ${pts[n - 1].x.toFixed(1)} ${BOTTOM_Y} L ${pts[0].x.toFixed(1)} ${BOTTOM_Y} Z`;
 
-  // label every 4 hours, always include first
-  const labelIdxs = Array.from({ length: n }, (_, i) => i).filter(i => i % 4 === 0);
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" aria-hidden="true">
+      <defs>
+        <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="white" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="white" stopOpacity="0.02" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#hcGrad)" />
+      <path
+        d={line}
+        fill="none"
+        stroke="white"
+        strokeWidth={2}
+        strokeOpacity={0.9}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      {labelIdxs.map(i => (
+        <g key={i}>
+          <circle cx={pts[i].x} cy={pts[i].y} r={3} fill="white" fillOpacity={0.9} />
+          <text x={toX(i)} y={pts[i].y - 7} textAnchor="middle" fill="white" fillOpacity={0.85} fontSize={11} fontWeight="500">
+            {temps[i]}°
+          </text>
+          <text x={toX(i)} y={BOTTOM_Y + 16} textAnchor="middle" fill="white" fillOpacity={0.45} fontSize={11}>
+            {formatHour(hourly[i].time)}
+          </text>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+function RainView({
+  hourly, toX, xStep, labelIdxs,
+}: {
+  hourly: HourlyPoint[];
+  toX: (i: number) => number;
+  xStep: number;
+  labelIdxs: number[];
+}) {
+  const barW = xStep * 0.65;
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-3xl px-4 pt-4 pb-3 shadow-2xl w-full">
-      <p className="text-white/50 text-xs uppercase tracking-widest mb-1">Next 24 hours</p>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" aria-hidden="true">
-        <defs>
-          <linearGradient id="hcGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="white" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="white" stopOpacity="0.02" />
-          </linearGradient>
-        </defs>
-
-        {/* precipitation probability bars */}
-        {hourly.map((h, i) => {
-          const barH = (h.precipitationProbability / 100) * (PLOT_H * 0.45);
-          return (
-            <rect
-              key={i}
-              x={toX(i) - xStep * 0.35}
-              y={BOTTOM_Y - barH}
-              width={xStep * 0.7}
-              height={barH}
-              fill="white"
-              fillOpacity={0.12}
-              rx={2}
-            />
-          );
-        })}
-
-        {/* area fill under temperature line */}
-        <path d={area} fill="url(#hcGrad)" />
-
-        {/* temperature line */}
-        <path
-          d={line}
-          fill="none"
-          stroke="white"
-          strokeWidth={2}
-          strokeOpacity={0.9}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-
-        {/* dots + labels at key hours */}
-        {labelIdxs.map(i => (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" aria-hidden="true">
+      <defs>
+        <linearGradient id="pcGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="white" stopOpacity="0.55" />
+          <stop offset="100%" stopColor="white" stopOpacity="0.15" />
+        </linearGradient>
+      </defs>
+      {hourly.map((h, i) => {
+        const barH = h.precipitationProbability > 0
+          ? Math.max((h.precipitationProbability / 100) * PLOT_H, 3)
+          : 0;
+        return barH > 0 ? (
+          <rect
+            key={i}
+            x={toX(i) - barW / 2}
+            y={BOTTOM_Y - barH}
+            width={barW}
+            height={barH}
+            fill="url(#pcGrad)"
+            rx={3}
+          />
+        ) : null;
+      })}
+      {labelIdxs.map(i => {
+        const prob = hourly[i].precipitationProbability;
+        const barH = (prob / 100) * PLOT_H;
+        const labelY = Math.max(PAD_TOP + 12, BOTTOM_Y - barH - 6);
+        return (
           <g key={i}>
-            <circle cx={pts[i].x} cy={pts[i].y} r={3} fill="white" fillOpacity={0.9} />
-            <text
-              x={toX(i)}
-              y={pts[i].y - 7}
-              textAnchor="middle"
-              fill="white"
-              fillOpacity={0.85}
-              fontSize={11}
-              fontWeight="500"
-            >
-              {temps[i]}°
-            </text>
-            <text
-              x={toX(i)}
-              y={BOTTOM_Y + 16}
-              textAnchor="middle"
-              fill="white"
-              fillOpacity={0.45}
-              fontSize={11}
-            >
+            {prob >= 5 && (
+              <text x={toX(i)} y={labelY} textAnchor="middle" fill="white" fillOpacity={0.85} fontSize={11} fontWeight="500">
+                {prob}%
+              </text>
+            )}
+            <text x={toX(i)} y={BOTTOM_Y + 16} textAnchor="middle" fill="white" fillOpacity={0.45} fontSize={11}>
               {formatHour(hourly[i].time)}
             </text>
           </g>
-        ))}
-      </svg>
-    </div>
+        );
+      })}
+      {/* zero-rain hint */}
+      {hourly.every(h => h.precipitationProbability === 0) && (
+        <text x={W / 2} y={H / 2} textAnchor="middle" fill="white" fillOpacity={0.3} fontSize={13}>
+          No precipitation expected
+        </text>
+      )}
+    </svg>
   );
 }

@@ -10,7 +10,6 @@ import { useSavedLocations } from "./hooks/useSavedLocations";
 import { CurrentWeather } from "./components/CurrentWeather";
 import { ForecastStrip } from "./components/ForecastStrip";
 import { HourlyChart } from "./components/HourlyChart";
-import { PrecipChart } from "./components/PrecipChart";
 import { SearchBar } from "./components/SearchBar";
 import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
 import { CityMap } from "./components/CityMap";
@@ -192,9 +191,6 @@ export default function App() {
               </div>
               {showForecast && weather.hourly.length > 0 && (
                 <HourlyChart hourly={weather.hourly} unit={unit} />
-              )}
-              {showForecast && weather.hourly.length > 0 && (
-                <PrecipChart hourly={weather.hourly} />
               )}
               {showForecast && weather.forecast.length > 0 && (
                 <UVIndexCard uvIndex={weather.forecast[0].uvIndexMax} />
