@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CurrentWeather as WeatherData } from "../types/weather";
 import { WeatherIcon } from "./WeatherIcon";
+import { Sparkline } from "./Sparkline";
 
 function toCardinal(deg: number): string {
   const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
@@ -27,6 +28,7 @@ interface Props {
   onShare: () => Promise<void>;
   aqi?: number | null;
   avgTemp?: number | null;
+  historicalTemps?: number[] | null;
 }
 
 export function CurrentWeather({
@@ -40,6 +42,7 @@ export function CurrentWeather({
   onShare,
   aqi,
   avgTemp,
+  historicalTemps,
 }: Props) {
   const [shareConfirmed, setShareConfirmed] = useState(false);
 
@@ -155,6 +158,12 @@ export function CurrentWeather({
             <p className={`text-sm mt-0.5 ${delta > 0 ? "text-orange-300" : "text-blue-300"}`}>
               {delta > 0 ? "↑" : "↓"} {Math.abs(delta)}°{unit} {delta > 0 ? "warmer" : "cooler"} than usual
             </p>
+          )}
+          {historicalTemps && historicalTemps.length >= 2 && (
+            <div className="mt-2 w-24">
+              <p className="text-white/30 text-xs uppercase tracking-wider">Past 7 days</p>
+              <Sparkline temps={historicalTemps} unit={unit} />
+            </div>
           )}
         </div>
         <button

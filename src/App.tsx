@@ -20,6 +20,7 @@ import { getWeatherTheme } from "./utils/wmo";
 import { buildShareUrl, triggerShare } from "./utils/share";
 import { useAirQuality } from "./hooks/useAirQuality";
 import { useYearAgoWeather } from "./hooks/useYearAgoWeather";
+import { useHistoricalWeather } from "./hooks/useHistoricalWeather";
 
 export default function App() {
   const geo = useGeolocation();
@@ -63,6 +64,7 @@ export default function App() {
   const weather = useWeather(activeCoords);
   const airQuality = useAirQuality(activeCoords);
   const yearAgo = useYearAgoWeather(activeCoords);
+  const historical = useHistoricalWeather(activeCoords);
   const theme = getWeatherTheme(weather.data?.weatherCode ?? -1);
   const showForecast = geo.coords !== null || coords !== null;
 
@@ -184,6 +186,7 @@ export default function App() {
                   onShare={handleShare}
                   aqi={airQuality.aqi}
                   avgTemp={yearAgo.avgTemp}
+                  historicalTemps={historical.temps}
                 />
                 {showForecast && (
                   <ForecastStrip forecast={weather.forecast} unit={unit} />
