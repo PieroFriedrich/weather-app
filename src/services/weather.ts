@@ -7,6 +7,7 @@ interface OpenMeteoResponse {
     apparent_temperature: number;
     relative_humidity_2m: number;
     wind_speed_10m: number;
+    wind_direction_10m: number;
     weather_code: number;
   };
   hourly: {
@@ -33,7 +34,7 @@ export async function fetchWeather(
   const url =
     `https://api.open-meteo.com/v1/forecast` +
     `?latitude=${latitude}&longitude=${longitude}` +
-    `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code` +
+    `&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_direction_10m,weather_code` +
     `&hourly=temperature_2m,precipitation_probability` +
     `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max` +
     `&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
@@ -54,6 +55,7 @@ export async function fetchWeather(
     feelsLike: Math.round(data.current.apparent_temperature),
     humidity: data.current.relative_humidity_2m,
     windSpeed: Math.round(data.current.wind_speed_10m),
+    windDirection: Math.round(data.current.wind_direction_10m),
     weatherCode: data.current.weather_code,
     precipitationProbability: data.daily.precipitation_probability_max[0] ?? 0,
     sunrise: formatSunTime(data.daily.sunrise[0]),

@@ -2,6 +2,11 @@ import { useState } from "react";
 import type { CurrentWeather as WeatherData } from "../types/weather";
 import { WeatherIcon } from "./WeatherIcon";
 
+function toCardinal(deg: number): string {
+  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
 function getAqiInfo(aqi: number): { label: string; colorClass: string } {
   if (aqi <= 20) return { label: "Good", colorClass: "text-emerald-300" };
   if (aqi <= 40) return { label: "Fair", colorClass: "text-lime-300" };
@@ -184,6 +189,24 @@ export function CurrentWeather({
             Wind
           </p>
           <p className="text-2xl font-light">{data.windSpeed} mph</p>
+          <div className="flex items-center gap-1 mt-1">
+            <svg
+              viewBox="0 0 24 24"
+              className="w-3.5 h-3.5 text-white/60 shrink-0"
+              style={{ transform: `rotate(${data.windDirection}deg)` }}
+              aria-hidden="true"
+            >
+              <path
+                d="M12 2 L12 22 M12 2 L7 8 M12 2 L17 8"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+            <span className="text-white/50 text-xs">{toCardinal(data.windDirection)}</span>
+          </div>
         </div>
         <div className="bg-white/10 rounded-2xl p-4">
           <p className="text-white/50 text-xs uppercase tracking-wider mb-1">

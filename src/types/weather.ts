@@ -16,6 +16,7 @@ export interface CurrentWeather {
   temperature: number;
   humidity: number;
   windSpeed: number;
+  windDirection: number;
   weatherCode: number;
   precipitationProbability: number;
   feelsLike: number;
