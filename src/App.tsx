@@ -15,6 +15,7 @@ import { SearchBar } from "./components/SearchBar";
 import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
 import { CityMap } from "./components/CityMap";
 import { UVIndexCard } from "./components/UVIndexCard";
+import { WeatherSkeleton } from "./components/WeatherSkeleton";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
 import { buildShareUrl, triggerShare } from "./utils/share";
@@ -157,9 +158,7 @@ export default function App() {
           )}
 
           {(weather.loading || (weather.data && !cityReady)) && (
-            <p className="text-white/50 text-sm animate-pulse">
-              Loading weather…
-            </p>
+            <WeatherSkeleton />
           )}
 
           {weather.error && (
