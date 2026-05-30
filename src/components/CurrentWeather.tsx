@@ -197,7 +197,12 @@ export function CurrentWeather({
           <p className="text-white/50 text-xs uppercase tracking-wider mb-1">
             Wind
           </p>
-          <p className="text-2xl font-light">{data.windSpeed} mph</p>
+          <p className="text-2xl font-light">
+            {unit === "C"
+              ? Math.round(data.windSpeed * 1.60934)
+              : data.windSpeed}{" "}
+            {unit === "C" ? "km/h" : "mph"}
+          </p>
           <div className="flex items-center gap-1 mt-1">
             <svg
               viewBox="0 0 24 24"
