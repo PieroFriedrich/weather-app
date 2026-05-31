@@ -14,6 +14,7 @@ import { SearchBar } from "./components/SearchBar";
 import { SavedLocationsPanel } from "./components/SavedLocationsPanel";
 import { CityMap } from "./components/CityMap";
 import { UVIndexCard } from "./components/UVIndexCard";
+import { WeatherAlerts } from "./components/WeatherAlerts";
 import { WeatherSkeleton } from "./components/WeatherSkeleton";
 import { reverseGeocode } from "./services/geocoding";
 import { getWeatherTheme } from "./utils/wmo";
@@ -168,6 +169,13 @@ export default function App() {
 
           {weather.data && !weather.loading && cityReady && (
             <div className="flex flex-col gap-4">
+              <WeatherAlerts
+                key={`${activeCoords?.latitude}-${activeCoords?.longitude}`}
+                current={weather.data}
+                forecast={weather.forecast}
+                hourly={weather.hourly}
+                unit={unit}
+              />
               <div className="flex flex-col min-[850px]:flex-row items-stretch gap-4">
                 <CurrentWeather
                   data={weather.data}
