@@ -122,7 +122,7 @@ export default function App() {
           aria-hidden="true"
         />
       )}
-      <h1 className="text-3xl font-light text-white tracking-widest">
+      <h1 className="text-4xl font-thin text-white tracking-widest">
         Weather
       </h1>
 
